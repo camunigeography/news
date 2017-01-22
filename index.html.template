@@ -5,6 +5,7 @@ $settings = array (
 	'hostname' => 'localhost',
 	'username' => 'the_username',
 	'password' => 'the_password',
+	'userCallback' => 'userCallback',
 	'imageLocation' => '/images/news/',	// Equivalent to imageDirectory in URL terms
 	'imageDirectory' => $_SERVER['DOCUMENT_ROOT'] . '/images/news/',
 	'internalHostRegexp' => '.institution.example.org$',
@@ -16,6 +17,20 @@ $settings = array (
 		'http://bar.institution.example.org/news/' => 'Bar',
 	),
 );
+
+# Callback function to get the full details of a user
+function userCallback ($username)
+{
+	/*
+	Function returning array in this format:
+	
+	return array (
+		'email' => 'spqr1@example.org',
+		'forename' => 'Jane',
+	);
+	
+	*/
+}
 
 # Load and run the news system
 require_once ('news.php');

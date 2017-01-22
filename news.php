@@ -20,7 +20,7 @@ class news extends frontControllerApplication
 			'imageDirectory' => NULL,
 			'imageLocation' => NULL,	// Equivalent to imageDirectory in URL terms
 			'thumbnailsSubfolder' => 'thumbnails/',
-			'peopleDatabase' => 'people',
+			'userCallback' => NULL,		// Callback function
 			'divId' => 'newsarticles',
 			'h1' => '<h1>News submission</h1>',
 			'institutionsDefaults' => array (),
@@ -168,13 +168,17 @@ class news extends frontControllerApplication
 	private function userDetails ()
 	{
 		# Get the list of users
-		if (!$userDetails = $this->databaseConnection->select ($this->settings['peopleDatabase'], 'people', array ('username' => $user /*, 'active' => 'Y' */ ))) {
+		$userCallback = $this->settings['userCallback'];
+		if (!$userDetails = $userCallback ($this->user)) {
 			return false;
 		}
 		
+		# Limit to required fields
+		$fields = array ('email', 'forename');
+		$userDetails = application::arrayFields ($userDetails, $fields);
 		
 		# Otherwise return the details
-		return $userDetails[$user];
+		return $userDetails;
 	}
 	
 	
