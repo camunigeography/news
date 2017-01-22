@@ -192,7 +192,7 @@ class news extends frontControllerApplication
 			#!# Ideally there would be some way to define a set of domain names that are treated as 'internal' so that http://www.example.org/foo/ could be entered rather than /foo/ to avoid external links being created
 			'richtext' => array ('editorToolbarSet' => 'BasicLonger', 'width' => 600, 'height' => 300, ),
 			'richtextAbbreviated' => array ('editorToolbarSet' => 'BasicLonger', 'width' => 600, 'height' => 180, ),
-			'institutions' => array ('default' => implode (',', $institutionsDefaults), ),
+			'institutions' => array ('type' => 'checkboxes', 'values' => $this->settings['availableInstitutions'], 'separator' => ',', 'defaultPresplit' => true, 'output' => array ('processing' => 'special-setdatatype'), ),
 			'startDate' => array ('default' => 'timestamp', ),
 			'urlInternal' => array ('placeholder' => 'http://', 'regexp' => '^https?://'),
 			'frontPageOrder' => array ('nullText' => false, ),
