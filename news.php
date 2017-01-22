@@ -10,7 +10,7 @@ require_once ('frontControllerApplication.php');
 class news extends frontControllerApplication
 {
 	# Function to assign defaults additional to the general application defaults
-	function defaults ()
+	public function defaults ()
 	{
 		# Specify available arguments as defaults or as NULL (to represent a required argument)
 		$defaults = array (
@@ -47,7 +47,7 @@ class news extends frontControllerApplication
 	
 	
 	# Function assign additional actions
-	function actions ()
+	public function actions ()
 	{
 		# Specify additional actions
 		$actions = array (
@@ -101,7 +101,7 @@ class news extends frontControllerApplication
 	
 	
 	# Additional initialisation
-	function main ()
+	public function main ()
 	{
 		# Load required libraries
 		require_once ('image.php');
