@@ -46,6 +46,16 @@ class news extends frontControllerApplication
 	}
 	
 	
+	# Define the available formats and the function which creates them
+	private $exportFormats = array (
+		'frontpage'	=> 'html',
+		'recent'	=> 'html',
+		'archive'	=> 'html',
+		'json'		=> 'json',
+		'feed'		=> 'rss',
+	);
+	
+	
 	# Function assign additional actions
 	public function actions ()
 	{
@@ -150,15 +160,6 @@ class news extends frontControllerApplication
 		$this->photographDirectoryOriginals = $this->settings['imageDirectory'] . 'originals/';
 		$this->photographDirectoryMain = $this->settings['imageDirectory'];	// i.e. top level
 		$this->photographDirectoryThumbnail = $this->settings['imageDirectory'] . $this->settings['thumbnailsSubfolder'];
-		
-		# Define the available formats and the function which creates them
-		$this->exportFormats = array (
-			'frontpage'	=> 'html',
-			'recent'	=> 'html',
-			'archive'	=> 'html',
-			'json'		=> 'json',
-			'feed'		=> 'rss',
-		);
 		
 	}
 	
