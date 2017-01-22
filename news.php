@@ -257,7 +257,7 @@ class news extends frontControllerApplication
 		$form->email (array (
 			'name' => 'email',
 			'title' => 'Your e-mail address (purely for acknowledgement)',
-			'default' => $this->user . '@' . $this->settings['emailDomain'],
+			'default' => $this->userDetails['email'],
 			'editable' => false,
 		));
 		
