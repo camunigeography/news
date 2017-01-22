@@ -100,6 +100,38 @@ class news extends frontControllerApplication
 	}
 	
 	
+	# Database structure definition
+	public function databaseStructure ()
+	{
+		return "
+			-- Administrators
+			CREATE TABLE IF NOT EXISTS `administrators` (
+			  `username` varchar(255) COLLATE utf8_unicode_ci NOT NULL COMMENT 'Username',
+			  `active` enum('','Yes','No') COLLATE utf8_unicode_ci NOT NULL DEFAULT 'Yes' COMMENT 'Currently active?',
+			  PRIMARY KEY (`username`)
+			) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='System administrators';
+			
+			-- Articles
+			CREATE TABLE IF NOT EXISTS `articles` (
+			  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'Automatic key' PRIMARY KEY,
+			  `title` varchar(255) COLLATE utf8_unicode_ci NOT NULL COMMENT 'Title of article',
+			  `institutions` varchar(255) COLLATE utf8_unicode_ci NOT NULL COMMENT 'Institution(s), comma-separated',
+			  `photograph` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Image (if available)',
+			  `imageCredit` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Image credit (if any)',
+			  `richtext` text COLLATE utf8_unicode_ci NOT NULL COMMENT 'Article text (max 2 paragraphs), including mention of relevant person',
+			  `richtextAbbreviated` text COLLATE utf8_unicode_ci COMMENT 'Abbreviated article text',
+			  `urlInternal` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Webpage on our site, if any',
+			  `urlExternal` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'External webpage giving more info, if any',
+			  `startDate` date NOT NULL COMMENT 'Date to appear on website',
+			  `moniker` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Unique text key (a-z,0-9) (acts as approval field also)',
+			  `frontPageOrder` enum('1','2','3','4','5','6','7','8','9','10') COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Ordering for visibility (1 = highest on page)',
+			  `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Submission date',
+			  UNIQUE KEY `moniker` (`moniker`)
+			) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+		";
+	}
+	
+	
 	# Additional initialisation
 	public function main ()
 	{
