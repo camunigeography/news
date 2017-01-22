@@ -173,7 +173,7 @@ class news extends frontControllerApplication
 			return false;
 		}
 		
-		# Limit to required fields
+		# Filter to used fields
 		$fields = array ('email', 'forename');
 		$userDetails = application::arrayFields ($userDetails, $fields);
 		
@@ -222,7 +222,7 @@ class news extends frontControllerApplication
 			'richtext' => array ('editorToolbarSet' => 'BasicLonger', 'width' => 600, 'height' => 300, ),
 			'richtextAbbreviated' => array ('editorToolbarSet' => 'BasicLonger', 'width' => 600, 'height' => 180, ),
 			'institutions' => array ('type' => 'checkboxes', 'values' => $this->settings['availableInstitutions'], 'separator' => ',', 'defaultPresplit' => true, 'output' => array ('processing' => 'special-setdatatype'), ),
-			'startDate' => array ('default' => 'timestamp', ),
+			'startDate' => array ('default' => 'timestamp', 'picker' => true, ),
 			'urlInternal' => array ('placeholder' => 'http://', 'regexp' => '^https?://'),
 			'frontPageOrder' => array ('nullText' => false, ),
 			'moniker' => array ('regexp' => '^([a-z0-9]+)$'),
