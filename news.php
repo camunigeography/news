@@ -165,21 +165,13 @@ class news extends frontControllerApplication
 	
 	
 	# Function to get the user details or force them to register
-	private function userDetails ($user = false)
+	private function userDetails ()
 	{
-		# Default to the current user
-		if (!$user) {$user = $this->user;}
-		
 		# Get the list of users
 		if (!$userDetails = $this->databaseConnection->select ($this->settings['peopleDatabase'], 'people', array ('username' => $user /*, 'active' => 'Y' */ ))) {
 			return false;
 		}
 		
-		# Determine the user's preferred e-mail address
-		$userDetails[$user]['_preferredEmail'] = (application::validEmail ($userDetails[$user]['websiteEmail']) ? $userDetails[$user]['websiteEmail'] : (application::validEmail ($userDetails[$user]['email']) ? $userDetails[$user]['email'] : "{$user}@{$this->settings['emailDomain']}"));
-		
-		# Assemble the user's full name
-		$userDetails[$user]['_fullname'] = "{$userDetails[$user]['forename']} {$userDetails[$user]['surname']}";
 		
 		# Otherwise return the details
 		return $userDetails[$user];
