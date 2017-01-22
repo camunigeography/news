@@ -31,7 +31,7 @@ class news extends frontControllerApplication
 			'newsPermalinkUrl' => '/news/',
 			'feedPermalinkUrl' => '/news/feed.rss',
 			'archivePermalinkUrl' => '/news/previous.html',
-			'authentication' => false,
+			'authentication' => false,	// Defined on a per-action basis below
 			'useEditing' => true,
 			'recent' => 10,
 			'internalHostRegexp' => NULL,
@@ -102,7 +102,6 @@ class news extends frontControllerApplication
 				'url' => 'export/%id.html',
 				'export' => true,
 			),
-			
 		);
 		
 		# Return the actions
@@ -150,7 +149,8 @@ class news extends frontControllerApplication
 		
 		# Get the user details
 		if (!$this->userDetails = $this->userDetails ()) {
-			if (($this->action != 'feedback') && ($this->action != 'exportformat')) {
+			$requiresAuth = (isSet ($this->actions[$this->action]['authentication']) && $this->actions[$this->action]['authentication']);
+			if ($requiresAuth) {	// Use authentication check for authorisation
 				echo "\n<p>You do not seem to be a registered user. Please <a href=\"{$this->baseUrl}/feedback.html\">contact the Webmaster</a> if this is incorrect.</p>";
 				return false;
 			}
