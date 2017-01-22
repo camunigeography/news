@@ -1,8 +1,7 @@
 <?php
 
-# Load and run the news system
-require_once ('news.php');
-new news (array (
+# Define the settings
+$settings = array (
 	'hostname' => 'localhost',
 	'username' => 'the_username',
 	'password' => 'the_password',
@@ -16,6 +15,10 @@ new news (array (
 		'http://foo.institution.example.org/news/' => 'Foo',
 		'http://bar.institution.example.org/news/' => 'Bar',
 	),
-));
+);
+
+# Load and run the news system
+require_once ('news.php');
+new news ($settings);
 
 ?>
