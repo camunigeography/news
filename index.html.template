@@ -1,0 +1,21 @@
+<?php
+
+# Load and run the news system
+require_once ('news.php');
+new news (array (
+	'hostname' => 'localhost',
+	'username' => 'the_username',
+	'password' => 'the_password',
+	'imageLocation' => '/images/news/',	// Equivalent to imageDirectory in URL terms
+	'imageDirectory' => $_SERVER['DOCUMENT_ROOT'] . '/images/news/',
+	'internalHostRegexp' => '.institution.example.org$',
+	'rssTitle' => 'Example organisation - news',
+	'rssImage' => 'http://www.example.org/images/general/logo.gif',
+	'availableInstitutions' => array ('Foo', 'Bar', ),
+	'institutionsDefaults' => array (
+		'http://foo.institution.example.org/news/' => 'Foo',
+		'http://bar.institution.example.org/news/' => 'Bar',
+	),
+));
+
+?>

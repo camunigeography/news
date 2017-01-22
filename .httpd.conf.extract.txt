@@ -1,0 +1,47 @@
+# Apache httpd.conf extract providing URL routing and other directives
+
+#   Example usage in httpd.conf:
+#   
+#   # Assessments
+#   Include /path/to/news/.httpd.conf.extract.txt
+#   Use MacroNews "/news/add" "News system" "/path/to/news/:/path/to/php/libraries/" "/path/to/images/"
+
+
+<Macro MacroNews $applicationBaseUrl $description $includePath $imageDirectory>
+	
+	<Location $applicationBaseUrl>
+		php_value include_path "$includePath"
+	</Location>
+	
+	Use MacroFrontControllerApplication "$applicationBaseUrl/" "$description"
+	
+	# Sinenomine integration
+	Use MacroSinenomineEmbeddedTable "$applicationBaseUrl" "/articles" "editing"
+	
+	# Main application directives
+	RewriteEngine on
+	RewriteRule ^$applicationBaseUrl/(submit).html$ $applicationBaseUrl/index.html?action=$1 [L,QSA]
+	RewriteRule ^$applicationBaseUrl/(export|view)/$ $applicationBaseUrl/index.html?action=$1 [L,QSA]
+	RedirectMatch permanent ^$applicationBaseUrl/(export|view)$ $applicationBaseUrl/$1/
+	
+	# Exporting
+	RewriteRule ^$applicationBaseUrl/export/([a-z]+).html$ $applicationBaseUrl/index.html?action=exportformat&item=$1 [L,QSA]
+	RewriteRule ^$applicationBaseUrl/export/(feed).rss$ $applicationBaseUrl/index.html?action=exportformat&item=$1 [L,QSA]
+	RewriteRule ^$applicationBaseUrl/export/(json).json$ $applicationBaseUrl/index.html?action=exportformat&item=$1 [L,QSA]
+	<LocationMatch ^$applicationBaseUrl/export/(([a-z]+).html|feed.rss|json.json)$>
+		php_value auto_prepend_file none
+		php_value auto_append_file none
+	</LocationMatch>
+	
+	# Client-side
+	<Location /news/feed.rss>
+		AddType application/x-httpd-php .rss
+		php_value auto_prepend_file none
+		php_value auto_append_file none
+	</Location>
+	
+	# Image source
+	Alias /images/news/ "$imageDirectory"
+	
+</Macro>
+
