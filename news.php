@@ -443,7 +443,7 @@ class news extends frontControllerApplication
 	
 	
 	# Function to get the articles
-	public function getArticles ($limit = false, $institution)
+	private function getArticles ($limit = false, $institution)
 	{
 		# If the limit is text, treat this as a field whose data contains ordering data
 		$requireField = false;
@@ -494,7 +494,7 @@ class news extends frontControllerApplication
 	
 	
 	# Function to get the total number of articles
-	public function getTotalArticles ()
+	private function getTotalArticles ()
 	{
 		# Get the total
 		$total = $this->databaseConnection->getTotal ($this->settings['database'], $this->settings['table']);
