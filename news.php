@@ -36,7 +36,7 @@ class news extends frontControllerApplication
 			'internalHostRegexp' => NULL,
 			'rssTitle' => NULL,
 			'rssImage' => NULL,
-			'defaultInstitution' => NULL,
+			'defaultSite' => NULL,
 		);
 		
 		# Return the defaults
@@ -410,7 +410,7 @@ class news extends frontControllerApplication
 	{
 		# Get the articles or end
 		#!# This needs to be ordered by date,ordering
-		if (!$articles = $this->getArticles ('frontPageOrder', $this->settings['defaultInstitution'])) {
+		if (!$articles = $this->getArticles ('frontPageOrder', $this->settings['defaultSite'])) {
 			return "\n<p>There are no items of news at present.</p>";
 		}
 		
@@ -692,7 +692,7 @@ class news extends frontControllerApplication
 	private function exportFeed ($maximumEntries = 24)
 	{
 		# Get the articles
-		$articles = $this->getArticles ($this->settings['recent'], $this->settings['defaultInstitution']);
+		$articles = $this->getArticles ($this->settings['recent'], $this->settings['defaultSite']);
 		
 		# Define the base page
 		$fullBaseUrl = "{$_SERVER['_SITE_URL']}{$this->baseUrl}";
