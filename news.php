@@ -323,17 +323,25 @@ class news extends frontControllerApplication
 	# Function to provide a list of export formats
 	public function export ()
 	{
-		# Create the list
-		$list = array ();
-		foreach ($this->exportFormats as $format => $extension) {
-			$title = "<strong>" . ucfirst ($format) . '</strong> format';
-			$location = "{$this->baseUrl}/export/{$format}.{$extension}";
-			$phpCode = "<a href=\"{$location}\">{$_SERVER['_SITE_URL']}{$location}</a>";
-			$list[$title] = $phpCode;
-		}
+		# Start the HTML
+		$html = '';
 		
-		# Compile the HTML
-		$html = application::htmlTableKeyed ($list, array (), true, 'lines', $allowHtml = true);
+		# Create the list
+		foreach ($this->settings['availableInstitutions'] as $institution) {
+			
+			# Create the table entries
+			$table = array ();
+			foreach ($this->exportFormats as $format => $extension) {
+				$title = "<strong>" . ucfirst ($format) . '</strong> format';
+				$location = "{$this->baseUrl}/export/{$format}.{$extension}?institution={$institution}";
+				$phpCode = "<a href=\"{$location}\">{$_SERVER['_SITE_URL']}{$location}</a>";
+				$table[$title] = $phpCode;
+			}
+			
+			# Compile the HTML
+			$html .= "\n<h3>" . htmlspecialchars ($institution) . ':</h3>';
+			$html .= application::htmlTableKeyed ($table, array (), true, 'lines', $allowHtml = true);
+		}
 		
 		# Show the HTML
 		echo $html;
