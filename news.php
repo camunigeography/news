@@ -43,13 +43,23 @@ class news extends frontControllerApplication
 	}
 	
 	
-	# Define the available formats and the function which creates them
+	# Define the available formats and their properties
 	private $exportFormats = array (
-		'frontpage'	=> 'html',
-		'recent'	=> 'html',
-		'archive'	=> 'html',
-		'json'		=> 'json',
-		'feed'		=> 'rss',
+		'frontpage'	=> array (
+			'extension' => 'html',
+		),
+		'recent'	=> array (
+			'extension' => 'html',
+		),
+		'archive'	=> array (
+			'extension' => 'html',
+		),
+		'json'		=> array (
+			'extension' => 'json',
+		),
+		'feed'		=> array (
+			'extension' => 'rss',
+		),
 	);
 	
 	
@@ -342,9 +352,9 @@ class news extends frontControllerApplication
 			
 			# Create the table entries
 			$table = array ();
-			foreach ($this->exportFormats as $format => $extension) {
+			foreach ($this->exportFormats as $format => $attributes) {
 				$title = "<strong>" . ucfirst ($format) . '</strong> format';
-				$location = "{$this->baseUrl}/export/{$format}.{$extension}?site={$site}";
+				$location = "{$this->baseUrl}/export/{$format}.{$attributes['extension']}?site={$site}";
 				$phpCode = "<a href=\"{$location}\">{$_SERVER['_SITE_URL']}{$location}</a>";
 				$table[$title] = $phpCode;
 			}
@@ -388,8 +398,8 @@ class news extends frontControllerApplication
 			$html .= "\n<p id=\"submitlink\" class=\"actions\"><a href=\"{$this->baseUrl}/\"><img src=\"/images/icons/add.png\" class=\"icon\" /> Submit news</a></p>";
 		}
 		
-		# Add RSS link
-		if ($this->exportFormats[$format] == 'html') {
+		# Add RSS link if the output type is HTML
+		if ($this->exportFormats[$format]['extension'] == 'html') {
 			$html .= "\n<p class=\"right\"><a href=\"{$this->settings['feedPermalinkUrl']}\"><img src=\"/images/icons/feed.png\" alt=\"RSS icon\" title=\"RSS feed\" class=\"icon\" /></a></p>";
 		}
 		
