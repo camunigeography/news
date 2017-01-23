@@ -45,26 +45,31 @@ class news extends frontControllerApplication
 	# Define the available formats and their properties
 	private $exportFormats = array (
 		'frontpage'	=> array (
+			'name' => 'Front page listing (HTML)',
 			'extension' => 'html',
 			'limit' => false,
 			'frontpage' => true,
 		),
+		'json'		=> array (
+			'name' => 'Front page listing (JSON)',
+			'extension' => 'json',
+			'limit' => 5,
+			'frontpage' => true,
+		),
 		'recent'	=> array (
+			'name' => 'Recent news full HTML page',
 			'extension' => 'html',
 			'limit' => 10,
 			'frontpage' => false,
 		),
 		'archive'	=> array (
+			'name' => 'Complete archive HTML page',
 			'extension' => 'html',
 			'limit' => false,
 			'frontpage' => false,
 		),
-		'json'		=> array (
-			'extension' => 'json',
-			'limit' => 5,
-			'frontpage' => true,
-		),
 		'feed'		=> array (
+			'name' => 'RSS feed',
 			'extension' => 'rss',
 			'limit' => 24,
 			'frontpage' => false,
@@ -346,7 +351,7 @@ class news extends frontControllerApplication
 			# Create the table entries
 			$table = array ();
 			foreach ($this->exportFormats as $format => $attributes) {
-				$title = "<strong>" . ucfirst ($format) . "</strong> format (" . ($attributes['limit'] ? "limit: {$attributes['limit']}" : 'no limit') . ')' . ($attributes['frontpage'] ? ' (Frontpage type)' : '');
+				$title = "<strong>" . htmlspecialchars ($attributes['name']) . ":</strong><br />(" . ($attributes['limit'] ? "Limit: {$attributes['limit']}" : 'No limit') . ')' . ($attributes['frontpage'] ? ' (Frontpage type)' : '');
 				$location = "{$this->baseUrl}/export/{$format}.{$attributes['extension']}?site={$site}";
 				$phpCode = "<a href=\"{$location}\">{$_SERVER['_SITE_URL']}{$location}</a>";
 				$table[$title] = $phpCode;
@@ -354,7 +359,7 @@ class news extends frontControllerApplication
 			
 			# Compile the HTML
 			$html .= "\n<h3>" . htmlspecialchars ($label) . ':</h3>';
-			$html .= application::htmlTableKeyed ($table, array (), true, 'lines', $allowHtml = true);
+			$html .= application::htmlTableKeyed ($table, array (), true, 'lines', $allowHtml = true, $showColons = false);
 		}
 		
 		# Show the HTML
