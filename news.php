@@ -93,6 +93,7 @@ class news extends frontControllerApplication
 			'export' => array (
 				'description' => 'Export',
 				'url' => 'export/',
+				'tab' => 'Export',
 				'icon' => 'application_view_list',
 				'administrator' => false,
 				'authentication' => true,
