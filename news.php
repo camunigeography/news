@@ -98,14 +98,6 @@ class news extends frontControllerApplication
 				'icon' => 'pencil',
 				'administrator' => true,
 			),
-			'view' => array (
-				'description' => false,
-				'url' => 'view/',
-				'tab' => 'View articles',
-				'icon' => 'application_view_list',
-				'administrator' => true,
-				'authentication' => true,
-			),
 			'export' => array (
 				'description' => 'Export',
 				'url' => 'export/',
@@ -336,17 +328,6 @@ class news extends frontControllerApplication
 		}
 		
 		
-	}
-	
-	
-	# View all approved articles
-	public function view ()
-	{
-		# Format as a table
-		$html = $this->exportArchive ();
-		
-		# Show the HTML
-		echo $html;
 	}
 	
 	

@@ -21,8 +21,8 @@
 	# Main application directives
 	RewriteEngine on
 	RewriteRule ^$applicationBaseUrl/(submit).html$ $applicationBaseUrl/index.html?action=$1 [L,QSA]
-	RewriteRule ^$applicationBaseUrl/(export|view)/$ $applicationBaseUrl/index.html?action=$1 [L,QSA]
-	RedirectMatch permanent ^$applicationBaseUrl/(export|view)$ $applicationBaseUrl/$1/
+	RewriteRule ^$applicationBaseUrl/(export)/$ $applicationBaseUrl/index.html?action=$1 [L,QSA]
+	RedirectMatch permanent ^$applicationBaseUrl/(export)$ $applicationBaseUrl/$1/
 	
 	# Exporting
 	RewriteRule ^$applicationBaseUrl/export/([a-z]+).html$ $applicationBaseUrl/index.html?action=exportformat&item=$1 [L,QSA]
