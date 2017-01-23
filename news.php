@@ -47,22 +47,27 @@ class news extends frontControllerApplication
 		'frontpage'	=> array (
 			'extension' => 'html',
 			'limit' => false,
+			'frontpage' => true,
 		),
 		'recent'	=> array (
 			'extension' => 'html',
 			'limit' => 10,
+			'frontpage' => false,
 		),
 		'archive'	=> array (
 			'extension' => 'html',
 			'limit' => false,
+			'frontpage' => false,
 		),
 		'json'		=> array (
 			'extension' => 'json',
 			'limit' => 5,
+			'frontpage' => true,
 		),
 		'feed'		=> array (
 			'extension' => 'rss',
 			'limit' => 24,
+			'frontpage' => false,
 		),
 	);
 	
@@ -360,7 +365,7 @@ class news extends frontControllerApplication
 			# Create the table entries
 			$table = array ();
 			foreach ($this->exportFormats as $format => $attributes) {
-				$title = "<strong>" . ucfirst ($format) . "</strong> format (" . ($attributes['limit'] ? "limit: {$attributes['limit']}" : 'no limit') . ')';
+				$title = "<strong>" . ucfirst ($format) . "</strong> format (" . ($attributes['limit'] ? "limit: {$attributes['limit']}" : 'no limit') . ')' . ($attributes['frontpage'] ? ' (Frontpage type)' : '');
 				$location = "{$this->baseUrl}/export/{$format}.{$attributes['extension']}?site={$site}";
 				$phpCode = "<a href=\"{$location}\">{$_SERVER['_SITE_URL']}{$location}</a>";
 				$table[$title] = $phpCode;
@@ -415,7 +420,7 @@ class news extends frontControllerApplication
 		
 		# Construct the HTML based on the selected format
 		$function = 'export' . ucfirst ($format);
-		$html .= $this->{$function} ($site, $limit);
+		$html .= $this->{$function} ($site, $limit, $this->exportFormats[$format]['frontpage']);
 		
 		# Surround with a div (frontControllerApplication will have stripped the 'div' setting when the export flag is on)
 		if ($this->settings['divId']) {
@@ -428,14 +433,14 @@ class news extends frontControllerApplication
 	
 	
 	# Function to format the articles as an HTML table
-	public function exportFrontpage ($site, $limit)
+	public function exportFrontpage ($site, $limit, $frontpage)
 	{
 		# End if no/invalid site
 		if (!$site) {return false;}
 		
 		# Get the articles or end
 		#!# This needs to be ordered by date,ordering
-		if (!$articles = $this->getArticles ($site, $limit, 'frontPageOrder')) {
+		if (!$articles = $this->getArticles ($site, $limit, $frontpage)) {
 			return "\n<p>There are no items of news at present.</p>";
 		}
 		
@@ -457,13 +462,13 @@ class news extends frontControllerApplication
 	
 	
 	# Function to format the table as a listing
-	public function exportRecent ($site, $limit)
+	public function exportRecent ($site, $limit, $frontpage)
 	{
 		# End if no/invalid site
 		if (!$site) {return false;}
 		
 		# Get the articles or end
-		if (!$articles = $this->getArticles ($site, $limit)) {
+		if (!$articles = $this->getArticles ($site, $limit, $frontpage)) {
 			return "\n<p>There are no items of news at present.</p>";
 		}
 		
@@ -489,13 +494,13 @@ class news extends frontControllerApplication
 	
 	
 	# Function to format the table as a listing
-	public function exportArchive ($site, $limit)
+	public function exportArchive ($site, $limit, $frontpage)
 	{
 		# End if no/invalid site
 		if (!$site) {return false;}
 		
 		# Get the articles or end
-		if (!$articles = $this->getArticles ($site, $limit)) {
+		if (!$articles = $this->getArticles ($site, $limit, $frontpage)) {
 			return "\n<p>There are no items of news.</p>";
 		}
 		
@@ -513,7 +518,7 @@ class news extends frontControllerApplication
 	
 	
 	# Function to get the articles
-	private function getArticles ($site, $limit = false, $requireField = false)
+	private function getArticles ($site, $limit, $frontpage)
 	{
 		# Define prepared statement values
 		$preparedStatementValues = array ();
@@ -527,10 +532,10 @@ class news extends frontControllerApplication
 			FROM {$this->dataSource}
 			WHERE
 				    moniker != '' AND moniker IS NOT NULL"
-				. ($requireField ? " AND {$requireField} IS NOT NULL" : '')
+				. ($frontpage ? " AND frontPageOrder IS NOT NULL" : '')
 				. " AND sites LIKE :site
 			ORDER BY "
-				. ($requireField ? $requireField . ' ASC, ' : '')
+				. ($frontpage ? 'frontPageOrder ASC, ' : '')
 				. "startDate DESC, timestamp DESC "
 			. ($limit ? "LIMIT {$limit} " : '') .
 		';';
@@ -664,13 +669,13 @@ class news extends frontControllerApplication
 	
 	
 	# JSON output
-	private function exportJson ($site, $limit)
+	private function exportJson ($site, $limit, $frontpage)
 	{
 		# End if no/invalid site
 		if (!$site) {return false;}
 		
 		# Get the articles
-		$articles = $this->getArticles ($site, $limit, 'frontPageOrder');
+		$articles = $this->getArticles ($site, $limit, $frontpage);
 		
 		# Decorate
 		foreach ($articles as $id => $article) {
@@ -688,13 +693,13 @@ class news extends frontControllerApplication
 	
 	
 	# RSS (Atom) news feed
-	private function exportFeed ($site, $limit)
+	private function exportFeed ($site, $limit, $frontpage)
 	{
 		# End if no/invalid site
 		if (!$site) {return false;}
 		
 		# Get the articles
-		$articles = $this->getArticles ($site, $limit);
+		$articles = $this->getArticles ($site, $limit, $frontpage);
 		
 		# Define the base page
 		$fullBaseUrl = "{$_SERVER['_SITE_URL']}{$this->baseUrl}";
