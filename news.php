@@ -351,13 +351,16 @@ class news extends frontControllerApplication
 		# Start the HTML
 		$html = '';
 		
+		# Note optional parameters
+		$html .= "\n<p>Optional parameter: <tt>limit=<em>&lt;int&gt;</em></tt> (default as listed below).</p>";
+		
 		# Create the list
 		foreach ($this->settings['sites'] as $site => $label) {
 			
 			# Create the table entries
 			$table = array ();
 			foreach ($this->exportFormats as $format => $attributes) {
-				$title = "<strong>" . ucfirst ($format) . '</strong> format';
+				$title = "<strong>" . ucfirst ($format) . "</strong> format (" . ($attributes['limit'] ? "limit: {$attributes['limit']}" : 'no limit') . ')';
 				$location = "{$this->baseUrl}/export/{$format}.{$attributes['extension']}?site={$site}";
 				$phpCode = "<a href=\"{$location}\">{$_SERVER['_SITE_URL']}{$location}</a>";
 				$table[$title] = $phpCode;
@@ -390,7 +393,7 @@ class news extends frontControllerApplication
 		$site = (isSet ($_GET['site']) && strlen ($_GET['site']) && array_key_exists ($_GET['site'], $this->settings['sites']) ? $_GET['site'] : false);
 		
 		# Determine the limit
-		$limit = $this->exportFormats[$format]['limit'];
+		$limit = (isSet ($_GET['limit']) && ctype_digit ($_GET['limit']) ? $_GET['limit'] : $this->exportFormats[$format]['limit']);
 		
 		# If $_GET['REMOTE_ADDR'] is supplied as a query string argument, proxy that through
 		$remoteAddr = $_SERVER['REMOTE_ADDR'];
@@ -673,16 +676,6 @@ class news extends frontControllerApplication
 		foreach ($articles as $id => $article) {
 			$articles[$id]['imageHtml'] = $this->articleImage ($article, false);
 			$articles[$id]['articleHtml'] = ($article['richtextAbbreviated'] ? $article['richtextAbbreviated'] : $article['richtext']);
-		}
-		
-		# Limit if required
-		if (isSet ($_GET['limit']) && ctype_digit ($_GET['limit'])) {
-			$limit = $_GET['limit'];
-			$i = 1;
-			foreach ($articles as $id => $article) {
-				if ($i > $limit) {unset ($articles[$id]);}
-				$i++;
-			}
 		}
 		
 		# Send the feed
