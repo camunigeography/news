@@ -414,7 +414,7 @@ class news extends frontControllerApplication
 	
 	
 	# Function to format the articles as an HTML table
-	public function exportFrontpage ($site, $limit, $frontpage)
+	private function exportFrontpage ($site, $limit, $frontpage)
 	{
 		# End if no/invalid site
 		if (!$site) {return false;}
@@ -443,7 +443,7 @@ class news extends frontControllerApplication
 	
 	
 	# Function to format the table as a listing
-	public function exportRecent ($site, $limit, $frontpage)
+	private function exportRecent ($site, $limit, $frontpage)
 	{
 		# End if no/invalid site
 		if (!$site) {return false;}
@@ -475,7 +475,7 @@ class news extends frontControllerApplication
 	
 	
 	# Function to format the table as a listing
-	public function exportArchive ($site, $limit, $frontpage)
+	private function exportArchive ($site, $limit, $frontpage)
 	{
 		# End if no/invalid site
 		if (!$site) {return false;}
