@@ -36,7 +36,6 @@ class news extends frontControllerApplication
 			'internalHostRegexp' => NULL,
 			'rssTitle' => NULL,
 			'rssImage' => NULL,
-			'availableInstitutions' => NULL,	// Supply as array
 			'defaultInstitution' => NULL,
 		);
 		
@@ -235,7 +234,7 @@ class news extends frontControllerApplication
 			#!# Ideally there would be some way to define a set of domain names that are treated as 'internal' so that http://www.example.org/foo/ could be entered rather than /foo/ to avoid external links being created
 			'richtext' => array ('editorToolbarSet' => 'BasicLonger', 'width' => 600, 'height' => 300, ),
 			'richtextAbbreviated' => array ('editorToolbarSet' => 'BasicLonger', 'width' => 600, 'height' => 180, ),
-			'institutions' => array ('type' => 'checkboxes', 'values' => $this->settings['availableInstitutions'], 'separator' => ',', 'defaultPresplit' => true, 'output' => array ('processing' => 'special-setdatatype'), ),
+			'institutions' => array ('type' => 'checkboxes', 'values' => $this->settings['sites'], 'separator' => ',', 'defaultPresplit' => true, 'output' => array ('processing' => 'special-setdatatype'), ),
 			'startDate' => array ('default' => 'timestamp', 'picker' => true, ),
 			'urlInternal' => array ('placeholder' => 'http://', 'regexp' => '^https?://'),
 			'frontPageOrder' => array ('nullText' => false, ),
@@ -340,19 +339,19 @@ class news extends frontControllerApplication
 		$html = '';
 		
 		# Create the list
-		foreach ($this->settings['availableInstitutions'] as $institution) {
+		foreach ($this->settings['sites'] as $site => $label) {
 			
 			# Create the table entries
 			$table = array ();
 			foreach ($this->exportFormats as $format => $extension) {
 				$title = "<strong>" . ucfirst ($format) . '</strong> format';
-				$location = "{$this->baseUrl}/export/{$format}.{$extension}?institution={$institution}";
+				$location = "{$this->baseUrl}/export/{$format}.{$extension}?institution={$label}";
 				$phpCode = "<a href=\"{$location}\">{$_SERVER['_SITE_URL']}{$location}</a>";
 				$table[$title] = $phpCode;
 			}
 			
 			# Compile the HTML
-			$html .= "\n<h3>" . htmlspecialchars ($institution) . ':</h3>';
+			$html .= "\n<h3>" . htmlspecialchars ($label) . ':</h3>';
 			$html .= application::htmlTableKeyed ($table, array (), true, 'lines', $allowHtml = true);
 		}
 		

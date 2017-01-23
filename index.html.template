@@ -11,7 +11,6 @@ $settings = array (
 	'internalHostRegexp' => '.institution.example.org$',
 	'rssTitle' => 'Example organisation - news',
 	'rssImage' => 'http://www.example.org/images/general/logo.gif',
-	'availableInstitutions' => array ('Foo', 'Bar', ),
 );
 
 # Callback function to get the full details of a user
