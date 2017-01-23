@@ -140,10 +140,28 @@ class news extends frontControllerApplication
 			
 			-- Settings
 			CREATE TABLE `settings` (
-			  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'Automatic key (ignored)' PRIMARY KEY
+			  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'Automatic key (ignored)' PRIMARY KEY,
+			  `sites` text COLLATE utf8_unicode_ci NOT NULL COMMENT 'Sites available, one per line, as moniker,label'
 			) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Settings';
-			INSERT INTO `settings` (`id`) VALUES (1);
+			INSERT INTO `settings` (`id`, `sites`) VALUES (1, 'example,Example');
 		";
+	}
+	
+	
+	# Additional initialisation, pre-actions
+	public function mainPreActions ()
+	{
+		# Process the sites setting, which is saved as a textarea block
+		if ($this->action != 'settings') {
+			$sitesSetting = array ();
+			$lines = explode ("\n", str_replace ("\r\n", "\n", trim ($this->settings['sites'])));
+			foreach ($lines as $line) {
+				list ($moniker, $label) = explode (',', $line, 2);
+				$sitesSetting[$moniker] = $label;
+			}
+			$this->settings['sites'] = $sitesSetting;
+		}
+		
 	}
 	
 	
