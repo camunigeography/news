@@ -36,7 +36,6 @@ class news extends frontControllerApplication
 			'internalHostRegexp' => NULL,
 			'rssTitle' => NULL,
 			'rssImage' => NULL,
-			'defaultSite' => NULL,
 		);
 		
 		# Return the defaults
@@ -408,9 +407,15 @@ class news extends frontControllerApplication
 	# Function to format the articles as an HTML table
 	public function exportFrontpage ()
 	{
+		# Set the site
+		if (!isSet ($_GET['site']) || !strlen ($_GET['site']) || !array_key_exists ($_GET['site'], $this->settings['sites'])) {
+			return false;
+		}
+		$site = $_GET['site'];
+		
 		# Get the articles or end
 		#!# This needs to be ordered by date,ordering
-		if (!$articles = $this->getArticles ('frontPageOrder', $this->settings['defaultSite'])) {
+		if (!$articles = $this->getArticles ('frontPageOrder', $site)) {
 			return "\n<p>There are no items of news at present.</p>";
 		}
 		
@@ -691,8 +696,14 @@ class news extends frontControllerApplication
 	# RSS (Atom) news feed
 	private function exportFeed ($maximumEntries = 24)
 	{
+		# Set the site
+		if (!isSet ($_GET['site']) || !strlen ($_GET['site']) || !array_key_exists ($_GET['site'], $this->settings['sites'])) {
+			return false;
+		}
+		$site = $_GET['site'];
+		
 		# Get the articles
-		$articles = $this->getArticles ($this->settings['recent'], $this->settings['defaultSite']);
+		$articles = $this->getArticles ($this->settings['recent'], $site);
 		
 		# Define the base page
 		$fullBaseUrl = "{$_SERVER['_SITE_URL']}{$this->baseUrl}";
