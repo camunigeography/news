@@ -123,7 +123,7 @@ class news extends frontControllerApplication
 			CREATE TABLE IF NOT EXISTS `articles` (
 			  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'Automatic key' PRIMARY KEY,
 			  `title` varchar(255) COLLATE utf8_unicode_ci NOT NULL COMMENT 'Title of article',
-			  `institutions` varchar(255) COLLATE utf8_unicode_ci NOT NULL COMMENT 'Institution(s), comma-separated',
+			  `sites` varchar(255) COLLATE utf8_unicode_ci NOT NULL COMMENT 'Site(s), comma-separated',
 			  `photograph` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Image (if available)',
 			  `imageCredit` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Image credit (if any)',
 			  `richtext` text COLLATE utf8_unicode_ci NOT NULL COMMENT 'Article text (max 2 paragraphs), including mention of relevant person',
@@ -234,7 +234,7 @@ class news extends frontControllerApplication
 			#!# Ideally there would be some way to define a set of domain names that are treated as 'internal' so that http://www.example.org/foo/ could be entered rather than /foo/ to avoid external links being created
 			'richtext' => array ('editorToolbarSet' => 'BasicLonger', 'width' => 600, 'height' => 300, ),
 			'richtextAbbreviated' => array ('editorToolbarSet' => 'BasicLonger', 'width' => 600, 'height' => 180, ),
-			'institutions' => array ('type' => 'checkboxes', 'values' => $this->settings['sites'], 'separator' => ',', 'defaultPresplit' => true, 'output' => array ('processing' => 'special-setdatatype'), ),
+			'sites' => array ('type' => 'checkboxes', 'values' => $this->settings['sites'], 'separator' => ',', 'defaultPresplit' => true, 'output' => array ('processing' => 'special-setdatatype'), ),
 			'startDate' => array ('default' => 'timestamp', 'picker' => true, ),
 			'urlInternal' => array ('placeholder' => 'http://', 'regexp' => '^https?://'),
 			'frontPageOrder' => array ('nullText' => false, ),
@@ -345,7 +345,7 @@ class news extends frontControllerApplication
 			$table = array ();
 			foreach ($this->exportFormats as $format => $extension) {
 				$title = "<strong>" . ucfirst ($format) . '</strong> format';
-				$location = "{$this->baseUrl}/export/{$format}.{$extension}?institution={$label}";
+				$location = "{$this->baseUrl}/export/{$format}.{$extension}?site={$site}";
 				$phpCode = "<a href=\"{$location}\">{$_SERVER['_SITE_URL']}{$location}</a>";
 				$table[$title] = $phpCode;
 			}
@@ -434,14 +434,14 @@ class news extends frontControllerApplication
 	# Function to format the table as a listing
 	public function exportRecent ()
 	{
-		# Set the institution
-		if (!isSet ($_GET['institution']) || !strlen ($_GET['institution']) || !in_array ($_GET['institution'], $this->settings['availableInstitutions'])) {
+		# Set the site
+		if (!isSet ($_GET['site']) || !strlen ($_GET['site']) || !array_key_exists ($_GET['site'], $this->settings['sites'])) {
 			return false;
 		}
-		$institution = $_GET['institution'];
+		$site = $_GET['site'];
 		
 		# Get the articles or end
-		if (!$articles = $this->getArticles ($this->settings['recent'], $institution)) {
+		if (!$articles = $this->getArticles ($this->settings['recent'], $site)) {
 			return "\n<p>There are no items of news at present.</p>";
 		}
 		
@@ -469,14 +469,14 @@ class news extends frontControllerApplication
 	# Function to format the table as a listing
 	public function exportArchive ()
 	{
-		# Set the institution
-		if (!isSet ($_GET['institution']) || !strlen ($_GET['institution']) || !in_array ($_GET['institution'], $this->settings['availableInstitutions'])) {
+		# Set the site
+		if (!isSet ($_GET['site']) || !strlen ($_GET['site']) || !array_key_exists ($_GET['site'], $this->settings['sites'])) {
 			return false;
 		}
-		$institution = $_GET['institution'];
+		$site = $_GET['site'];
 		
 		# Get the articles or end
-		if (!$articles = $this->getArticles (false, $institution)) {
+		if (!$articles = $this->getArticles (false, $site)) {
 			return "\n<p>There are no items of news.</p>";
 		}
 		
@@ -494,7 +494,7 @@ class news extends frontControllerApplication
 	
 	
 	# Function to get the articles
-	private function getArticles ($limit = false, $institution)
+	private function getArticles ($limit = false, $site)
 	{
 		# If the limit is text, treat this as a field whose data contains ordering data
 		$requireField = false;
@@ -505,7 +505,7 @@ class news extends frontControllerApplication
 		
 		# Define prepared statement values
 		$preparedStatementValues = array ();
-		if ($institution) {$preparedStatementValues['institution'] = '%' . $institution . '%';}
+		if ($site) {$preparedStatementValues['site'] = '%' . $site . '%';}
 		
 		# Get the data
 		$query = "SELECT
@@ -516,7 +516,7 @@ class news extends frontControllerApplication
 			WHERE
 				    moniker != '' AND moniker IS NOT NULL "
 				. ($requireField ? "AND {$requireField} IS NOT NULL " : '')
-				. ($institution ? "AND institutions LIKE :institution " : '') . "
+				. ($site ? "AND sites LIKE :site " : '') . "
 			ORDER BY "
 				. ($requireField ? $requireField . ' ASC, ' : '')
 				. "startDate DESC, timestamp DESC "
@@ -654,14 +654,14 @@ class news extends frontControllerApplication
 	# JSON output
 	private function exportJson ($maximumEntries = 5)
 	{
-		# Set the institution
-		if (!isSet ($_GET['institution']) || !strlen ($_GET['institution']) || !in_array ($_GET['institution'], $this->settings['availableInstitutions'])) {
+		# Set the site
+		if (!isSet ($_GET['site']) || !strlen ($_GET['site']) || !array_key_exists ($_GET['site'], $this->settings['sites'])) {
 			return false;
 		}
-		$institution = $_GET['institution'];
+		$site = $_GET['site'];
 		
 		# Get the articles
-		$articles = $this->getArticles ('frontPageOrder', $institution);
+		$articles = $this->getArticles ('frontPageOrder', $site);
 		
 		# Decorate
 		foreach ($articles as $id => $article) {
