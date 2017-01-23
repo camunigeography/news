@@ -415,7 +415,7 @@ class news extends frontControllerApplication
 		
 		# Get the articles or end
 		#!# This needs to be ordered by date,ordering
-		if (!$articles = $this->getArticles ($site, 'frontPageOrder')) {
+		if (!$articles = $this->getArticles ($site, false, 'frontPageOrder')) {
 			return "\n<p>There are no items of news at present.</p>";
 		}
 		
@@ -475,7 +475,7 @@ class news extends frontControllerApplication
 		if (!$site) {return false;}
 		
 		# Get the articles or end
-		if (!$articles = $this->getArticles ($site, false)) {
+		if (!$articles = $this->getArticles ($site)) {
 			return "\n<p>There are no items of news.</p>";
 		}
 		
@@ -493,15 +493,8 @@ class news extends frontControllerApplication
 	
 	
 	# Function to get the articles
-	private function getArticles ($site, $limit = false)
+	private function getArticles ($site, $limit = false, $requireField = false)
 	{
-		# If the limit is text, treat this as a field whose data contains ordering data
-		$requireField = false;
-		if (ctype_alpha ($limit)) {
-			$requireField = $limit;
-			$limit = false;
-		}
-		
 		# Define prepared statement values
 		$preparedStatementValues = array ();
 		$preparedStatementValues['site'] = '%' . $site . '%';
@@ -657,7 +650,7 @@ class news extends frontControllerApplication
 		if (!$site) {return false;}
 		
 		# Get the articles
-		$articles = $this->getArticles ($site, 'frontPageOrder');
+		$articles = $this->getArticles ($site, false, 'frontPageOrder');
 		
 		# Decorate
 		foreach ($articles as $id => $article) {
