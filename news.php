@@ -326,13 +326,14 @@ class news extends frontControllerApplication
 		# Create the list
 		$list = array ();
 		foreach ($this->exportFormats as $format => $extension) {
-			$title = "<a href=\"{$this->baseUrl}/export/{$format}.{$extension}\"><strong>" . ucfirst ($format) . '</strong> format</a>';
-			$phpCode = '<?' . "php echo file_get_contents ('{$_SERVER['_SITE_URL']}{$this->baseUrl}/export/{$format}.{$extension}'); ?" . '>';	// Formatted like this to prevent confusing text editors
+			$title = "<strong>" . ucfirst ($format) . '</strong> format';
+			$location = "{$this->baseUrl}/export/{$format}.{$extension}";
+			$phpCode = "<a href=\"{$location}\">{$_SERVER['_SITE_URL']}{$location}</a>";
 			$list[$title] = $phpCode;
 		}
 		
 		# Compile the HTML
-		$html = application::htmlTableKeyed ($list);
+		$html = application::htmlTableKeyed ($list, array (), true, 'lines', $allowHtml = true);
 		
 		# Show the HTML
 		echo $html;
