@@ -32,7 +32,6 @@ class news extends frontControllerApplication
 			'archivePermalinkUrl' => '/news/previous.html',
 			'authentication' => false,	// Defined on a per-action basis below
 			'useEditing' => true,
-			'recent' => 10,
 			'internalHostRegexp' => NULL,
 			'rssTitle' => NULL,
 			'rssImage' => NULL,
@@ -47,18 +46,23 @@ class news extends frontControllerApplication
 	private $exportFormats = array (
 		'frontpage'	=> array (
 			'extension' => 'html',
+			'limit' => false,
 		),
 		'recent'	=> array (
 			'extension' => 'html',
+			'limit' => 10,
 		),
 		'archive'	=> array (
 			'extension' => 'html',
+			'limit' => false,
 		),
 		'json'		=> array (
 			'extension' => 'json',
+			'limit' => 5,
 		),
 		'feed'		=> array (
 			'extension' => 'rss',
+			'limit' => 24,
 		),
 	);
 	
@@ -385,6 +389,9 @@ class news extends frontControllerApplication
 		# Determine the site
 		$site = (isSet ($_GET['site']) && strlen ($_GET['site']) && array_key_exists ($_GET['site'], $this->settings['sites']) ? $_GET['site'] : false);
 		
+		# Determine the limit
+		$limit = $this->exportFormats[$format]['limit'];
+		
 		# If $_GET['REMOTE_ADDR'] is supplied as a query string argument, proxy that through
 		$remoteAddr = $_SERVER['REMOTE_ADDR'];
 		if (isSet ($_GET['REMOTE_ADDR'])) {
@@ -405,7 +412,7 @@ class news extends frontControllerApplication
 		
 		# Construct the HTML based on the selected format
 		$function = 'export' . ucfirst ($format);
-		$html .= $this->{$function} ($site);
+		$html .= $this->{$function} ($site, $limit);
 		
 		# Surround with a div (frontControllerApplication will have stripped the 'div' setting when the export flag is on)
 		if ($this->settings['divId']) {
@@ -418,14 +425,14 @@ class news extends frontControllerApplication
 	
 	
 	# Function to format the articles as an HTML table
-	public function exportFrontpage ($site)
+	public function exportFrontpage ($site, $limit)
 	{
 		# End if no/invalid site
 		if (!$site) {return false;}
 		
 		# Get the articles or end
 		#!# This needs to be ordered by date,ordering
-		if (!$articles = $this->getArticles ($site, false, 'frontPageOrder')) {
+		if (!$articles = $this->getArticles ($site, $limit, 'frontPageOrder')) {
 			return "\n<p>There are no items of news at present.</p>";
 		}
 		
@@ -447,13 +454,13 @@ class news extends frontControllerApplication
 	
 	
 	# Function to format the table as a listing
-	public function exportRecent ($site)
+	public function exportRecent ($site, $limit)
 	{
 		# End if no/invalid site
 		if (!$site) {return false;}
 		
 		# Get the articles or end
-		if (!$articles = $this->getArticles ($site, $this->settings['recent'])) {
+		if (!$articles = $this->getArticles ($site, $limit)) {
 			return "\n<p>There are no items of news at present.</p>";
 		}
 		
@@ -479,13 +486,13 @@ class news extends frontControllerApplication
 	
 	
 	# Function to format the table as a listing
-	public function exportArchive ($site)
+	public function exportArchive ($site, $limit)
 	{
 		# End if no/invalid site
 		if (!$site) {return false;}
 		
 		# Get the articles or end
-		if (!$articles = $this->getArticles ($site)) {
+		if (!$articles = $this->getArticles ($site, $limit)) {
 			return "\n<p>There are no items of news.</p>";
 		}
 		
@@ -654,13 +661,13 @@ class news extends frontControllerApplication
 	
 	
 	# JSON output
-	private function exportJson ($site, $maximumEntries = 5)
+	private function exportJson ($site, $limit)
 	{
 		# End if no/invalid site
 		if (!$site) {return false;}
 		
 		# Get the articles
-		$articles = $this->getArticles ($site, false, 'frontPageOrder');
+		$articles = $this->getArticles ($site, $limit, 'frontPageOrder');
 		
 		# Decorate
 		foreach ($articles as $id => $article) {
@@ -688,13 +695,13 @@ class news extends frontControllerApplication
 	
 	
 	# RSS (Atom) news feed
-	private function exportFeed ($site, $maximumEntries = 24)
+	private function exportFeed ($site, $limit)
 	{
 		# End if no/invalid site
 		if (!$site) {return false;}
 		
 		# Get the articles
-		$articles = $this->getArticles ($site, $this->settings['recent']);
+		$articles = $this->getArticles ($site, $limit);
 		
 		# Define the base page
 		$fullBaseUrl = "{$_SERVER['_SITE_URL']}{$this->baseUrl}";
