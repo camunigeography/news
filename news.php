@@ -23,7 +23,6 @@ class news extends frontControllerApplication
 			'userCallback' => NULL,		// Callback function
 			'divId' => 'newsarticles',
 			'h1' => '<h1>News submission</h1>',
-			'institutionsDefaults' => array (),
 			'imageWidthMain' => 300,
 			'imageWidthThumbnail' => 150,
 			'headingLevelPortal' => 3,	// Heading level (e.g. 3 for h3) for the news titles
@@ -212,16 +211,6 @@ class news extends frontControllerApplication
 	# Helper function to define the dataBinding attributes
 	private function formDataBindingAttributes ()
 	{
-		# Determine automatic selection of institution checkboxes
-		$institutionsDefaults = array ();
-		if ($this->settings['institutionsDefaults'] && is_array ($this->settings['institutionsDefaults'])) {
-			foreach ($this->settings['institutionsDefaults'] as $url => $institution) {
-				if (preg_match ('@^' . addcslashes ($url, '@') . '@', $_SERVER['_PAGE_URL'])) {
-					$institutionsDefaults[] = $institution;
-				}
-			}
-		}
-		
 		# Define the attributes
 		$attributes = array (
 			'photograph' => array ('directory' => $this->photographDirectoryOriginals, 'forcedFileName' => $this->user, 'allowedExtensions' => array ('jpg'), 'lowercaseExtension' => true, 'thumbnail' => true, ),
