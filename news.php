@@ -372,6 +372,9 @@ class news extends frontControllerApplication
 		# Start the HTML
 		$html  = '';
 		
+		# Determine the site
+		$site = (isSet ($_GET['site']) && strlen ($_GET['site']) && array_key_exists ($_GET['site'], $this->settings['sites']) ? $_GET['site'] : false);
+		
 		# If $_GET['REMOTE_ADDR'] is supplied as a query string argument, proxy that through
 		$remoteAddr = $_SERVER['REMOTE_ADDR'];
 		if (isSet ($_GET['REMOTE_ADDR'])) {
@@ -392,7 +395,7 @@ class news extends frontControllerApplication
 		
 		# Construct the HTML based on the selected format
 		$function = 'export' . ucfirst ($format);
-		$html .= $this->{$function} ();
+		$html .= $this->{$function} ($site);
 		
 		# Surround with a div (frontControllerApplication will have stripped the 'div' setting when the export flag is on)
 		if ($this->settings['divId']) {
@@ -405,17 +408,14 @@ class news extends frontControllerApplication
 	
 	
 	# Function to format the articles as an HTML table
-	public function exportFrontpage ()
+	public function exportFrontpage ($site)
 	{
-		# Set the site
-		if (!isSet ($_GET['site']) || !strlen ($_GET['site']) || !array_key_exists ($_GET['site'], $this->settings['sites'])) {
-			return false;
-		}
-		$site = $_GET['site'];
+		# End if no/invalid site
+		if (!$site) {return false;}
 		
 		# Get the articles or end
 		#!# This needs to be ordered by date,ordering
-		if (!$articles = $this->getArticles ('frontPageOrder', $site)) {
+		if (!$articles = $this->getArticles ($site, 'frontPageOrder')) {
 			return "\n<p>There are no items of news at present.</p>";
 		}
 		
@@ -437,16 +437,13 @@ class news extends frontControllerApplication
 	
 	
 	# Function to format the table as a listing
-	public function exportRecent ()
+	public function exportRecent ($site)
 	{
-		# Set the site
-		if (!isSet ($_GET['site']) || !strlen ($_GET['site']) || !array_key_exists ($_GET['site'], $this->settings['sites'])) {
-			return false;
-		}
-		$site = $_GET['site'];
+		# End if no/invalid site
+		if (!$site) {return false;}
 		
 		# Get the articles or end
-		if (!$articles = $this->getArticles ($this->settings['recent'], $site)) {
+		if (!$articles = $this->getArticles ($site, $this->settings['recent'])) {
 			return "\n<p>There are no items of news at present.</p>";
 		}
 		
@@ -472,16 +469,13 @@ class news extends frontControllerApplication
 	
 	
 	# Function to format the table as a listing
-	public function exportArchive ()
+	public function exportArchive ($site)
 	{
-		# Set the site
-		if (!isSet ($_GET['site']) || !strlen ($_GET['site']) || !array_key_exists ($_GET['site'], $this->settings['sites'])) {
-			return false;
-		}
-		$site = $_GET['site'];
+		# End if no/invalid site
+		if (!$site) {return false;}
 		
 		# Get the articles or end
-		if (!$articles = $this->getArticles (false, $site)) {
+		if (!$articles = $this->getArticles ($site, false)) {
 			return "\n<p>There are no items of news.</p>";
 		}
 		
@@ -499,7 +493,7 @@ class news extends frontControllerApplication
 	
 	
 	# Function to get the articles
-	private function getArticles ($limit = false, $site)
+	private function getArticles ($site, $limit = false)
 	{
 		# If the limit is text, treat this as a field whose data contains ordering data
 		$requireField = false;
@@ -510,7 +504,7 @@ class news extends frontControllerApplication
 		
 		# Define prepared statement values
 		$preparedStatementValues = array ();
-		if ($site) {$preparedStatementValues['site'] = '%' . $site . '%';}
+		$preparedStatementValues['site'] = '%' . $site . '%';
 		
 		# Get the data
 		$query = "SELECT
@@ -519,9 +513,9 @@ class news extends frontControllerApplication
 			DATE_FORMAT(startDate, '%D %M, %Y') AS date
 			FROM {$this->dataSource}
 			WHERE
-				    moniker != '' AND moniker IS NOT NULL "
-				. ($requireField ? "AND {$requireField} IS NOT NULL " : '')
-				. ($site ? "AND sites LIKE :site " : '') . "
+				    moniker != '' AND moniker IS NOT NULL"
+				. ($requireField ? " AND {$requireField} IS NOT NULL" : '')
+				. " AND sites LIKE :site
 			ORDER BY "
 				. ($requireField ? $requireField . ' ASC, ' : '')
 				. "startDate DESC, timestamp DESC "
@@ -657,16 +651,13 @@ class news extends frontControllerApplication
 	
 	
 	# JSON output
-	private function exportJson ($maximumEntries = 5)
+	private function exportJson ($site, $maximumEntries = 5)
 	{
-		# Set the site
-		if (!isSet ($_GET['site']) || !strlen ($_GET['site']) || !array_key_exists ($_GET['site'], $this->settings['sites'])) {
-			return false;
-		}
-		$site = $_GET['site'];
+		# End if no/invalid site
+		if (!$site) {return false;}
 		
 		# Get the articles
-		$articles = $this->getArticles ('frontPageOrder', $site);
+		$articles = $this->getArticles ($site, 'frontPageOrder');
 		
 		# Decorate
 		foreach ($articles as $id => $article) {
@@ -694,16 +685,13 @@ class news extends frontControllerApplication
 	
 	
 	# RSS (Atom) news feed
-	private function exportFeed ($maximumEntries = 24)
+	private function exportFeed ($site, $maximumEntries = 24)
 	{
-		# Set the site
-		if (!isSet ($_GET['site']) || !strlen ($_GET['site']) || !array_key_exists ($_GET['site'], $this->settings['sites'])) {
-			return false;
-		}
-		$site = $_GET['site'];
+		# End if no/invalid site
+		if (!$site) {return false;}
 		
 		# Get the articles
-		$articles = $this->getArticles ($this->settings['recent'], $site);
+		$articles = $this->getArticles ($site, $this->settings['recent']);
 		
 		# Define the base page
 		$fullBaseUrl = "{$_SERVER['_SITE_URL']}{$this->baseUrl}";
