@@ -252,6 +252,7 @@ class news extends frontControllerApplication
 			'sites' => array ('type' => 'checkboxes', 'values' => $this->settings['sites'], 'separator' => ',', 'defaultPresplit' => true, 'output' => array ('processing' => 'special-setdatatype'), ),
 			'startDate' => array ('default' => 'timestamp', 'picker' => true, ),
 			'urlInternal' => array ('placeholder' => 'http://', 'regexp' => '^https?://'),
+			'urlExternal' => array ('placeholder' => 'http://', 'regexp' => '^https?://'),
 			'frontPageOrder' => array ('nullText' => false, ),
 			'moniker' => array ('regexp' => '^([a-z0-9]+)$'),
 		);
