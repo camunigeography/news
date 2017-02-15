@@ -141,7 +141,7 @@ class news extends frontControllerApplication
 			  `sites` varchar(255) COLLATE utf8_unicode_ci NOT NULL COMMENT 'Site(s), comma-separated',
 			  `photograph` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Image (if available)',
 			  `imageCredit` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Image credit (if any)',
-			  `richtext` text COLLATE utf8_unicode_ci NOT NULL COMMENT 'Article text (max 2 paragraphs), including mention of relevant person',
+			  `richtext` text COLLATE utf8_unicode_ci NOT NULL COMMENT 'Article text, including mention of relevant person',
 			  `richtextAbbreviated` text COLLATE utf8_unicode_ci COMMENT 'Abbreviated article text',
 			  `urlInternal` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Webpage on our site, if any',
 			  `urlExternal` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'External webpage giving more info, if any',
@@ -247,7 +247,7 @@ class news extends frontControllerApplication
 		$attributes = array (
 			'photograph' => array ('directory' => $this->photographDirectoryOriginals, 'forcedFileName' => $this->user, 'allowedExtensions' => array ('jpg'), 'lowercaseExtension' => true, 'thumbnail' => true, ),
 			#!# Ideally there would be some way to define a set of domain names that are treated as 'internal' so that http://www.example.org/foo/ could be entered rather than /foo/ to avoid external links being created
-			'richtext' => array ('editorToolbarSet' => 'BasicLonger', 'width' => 600, 'height' => 300, ),
+			'richtext' => array ('editorToolbarSet' => 'BasicLonger', 'width' => 600, 'height' => 300, 'maxlength' => 1000, ),
 			'richtextAbbreviated' => array ('editorToolbarSet' => 'BasicLonger', 'width' => 600, 'height' => 180, ),
 			'sites' => array ('type' => 'checkboxes', 'values' => $this->settings['sites'], 'separator' => ',', 'defaultPresplit' => true, 'output' => array ('processing' => 'special-setdatatype'), ),
 			'startDate' => array ('default' => 'timestamp', 'picker' => true, ),
