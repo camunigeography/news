@@ -168,10 +168,12 @@ class news extends frontControllerApplication
 		# Process the sites setting, which is saved as a textarea block
 		if ($this->action != 'settings') {
 			$sitesSetting = array ();
+			$this->siteUrls = array ();
 			$lines = explode ("\n", str_replace ("\r\n", "\n", trim ($this->settings['sites'])));
 			foreach ($lines as $line) {
-				list ($moniker, $label) = explode (',', $line, 2);
-				$sitesSetting[$moniker] = $label;
+				list ($site, $label, $url) = explode (',', $line, 3);
+				$sitesSetting[$site] = $label;
+				$this->siteUrls[$site] = $url;
 			}
 			$this->settings['sites'] = $sitesSetting;
 		}
@@ -528,11 +530,23 @@ class news extends frontControllerApplication
 		';';
 		$articles = $this->databaseConnection->getData ($query, $this->dataSource, true, $preparedStatementValues);
 		
-		# If there is an internal URL, chopping the server name part if on the same site
+		# Simplify each URL present in the data for the client site requesting (i.e. chopping the server name part if on the same site); e.g. if site=foo supplied and foo's URL is foo.example.com, then http://foo.example.com/path/ is rewritten to /path/
+		$richtextFields = array ('richtext', 'richtextAbbreviated');
 		foreach ($articles as $key => $article) {
-			if ($article['urlInternal']) {
-				$delimiter = '@';
-				$articles[$key]['urlInternal'] = preg_replace ($delimiter . '^' . addcslashes ($_SERVER['_SITE_URL'], $delimiter) . $delimiter, '', $article['urlInternal']);
+			
+			# URL internal
+			$delimiter = '@';
+			$articles[$key]['urlInternal'] = preg_replace ($delimiter . '^' . addcslashes ('https?://' . $this->siteUrls[$site] . '/', $delimiter) . $delimiter, '/', $article['urlInternal']);
+			
+			# Article text (abbreviated and longer)
+			foreach ($richtextFields as $richtextField) {
+				
+				# Strip server name part
+				$articles[$key][$richtextField] = preg_replace ($delimiter . addcslashes (' href="' . 'https?://' . $this->siteUrls[$site] . '/', $delimiter) . $delimiter, ' href="/', $articles[$key][$richtextField]);
+				
+				# Normalise target="_blank" cases
+				$articles[$key][$richtextField] = str_replace (' target="_blank"', '', $articles[$key][$richtextField]);
+				$articles[$key][$richtextField] = preg_replace ('@<a([^>]*) href="(https?://)@', '<a\1 target="_blank" href="\2', $articles[$key][$richtextField]);
 			}
 		}
 		
