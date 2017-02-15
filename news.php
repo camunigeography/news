@@ -99,7 +99,7 @@ class news extends frontControllerApplication
 			'editing' => array (
 				'description' => false,
 				'url' => 'articles/',
-				'tab' => 'Data editing',
+				'tab' => 'Articles',
 				'icon' => 'pencil',
 				'administrator' => true,
 			),
