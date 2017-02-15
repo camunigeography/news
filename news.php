@@ -141,7 +141,7 @@ class news extends frontControllerApplication
 			  `sites` varchar(255) COLLATE utf8_unicode_ci NOT NULL COMMENT 'Site(s), comma-separated',
 			  `photograph` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Image (if available)',
 			  `imageCredit` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Image credit (if any)',
-			  `richtext` text COLLATE utf8_unicode_ci NOT NULL COMMENT 'Article text, including mention of relevant person',
+			  `richtextLonger` text COLLATE utf8_unicode_ci NOT NULL COMMENT 'Article text (full), including mention of relevant person',
 			  `richtextAbbreviated` text COLLATE utf8_unicode_ci COMMENT 'Abbreviated article text',
 			  `urlInternal` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Webpage on our site, if any',
 			  `urlExternal` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'External webpage giving more info, if any',
@@ -249,7 +249,7 @@ class news extends frontControllerApplication
 		$attributes = array (
 			'photograph' => array ('directory' => $this->photographDirectoryOriginals, 'forcedFileName' => $this->user, 'allowedExtensions' => array ('jpg'), 'lowercaseExtension' => true, 'thumbnail' => true, ),
 			#!# Ideally there would be some way to define a set of domain names that are treated as 'internal' so that http://www.example.org/foo/ could be entered rather than /foo/ to avoid external links being created
-			'richtext' => array ('editorToolbarSet' => 'BasicLonger', 'width' => 600, 'height' => 300, 'externalLinksTarget' => false, ),
+			'richtextLonger' => array ('editorToolbarSet' => 'BasicLonger', 'width' => 600, 'height' => 300, 'externalLinksTarget' => false, ),
 			'richtextAbbreviated' => array ('editorToolbarSet' => 'BasicLonger', 'width' => 600, 'height' => 180, 'maxlength' => 1000, 'externalLinksTarget' => false, ),
 			'sites' => array ('type' => 'checkboxes', 'values' => $this->settings['sites'], 'separator' => ',', 'defaultPresplit' => true, 'output' => array ('processing' => 'special-setdatatype'), ),
 			'startDate' => array ('default' => 'timestamp', 'picker' => true, ),
@@ -531,7 +531,7 @@ class news extends frontControllerApplication
 		$articles = $this->databaseConnection->getData ($query, $this->dataSource, true, $preparedStatementValues);
 		
 		# Simplify each URL present in the data for the client site requesting (i.e. chopping the server name part if on the same site); e.g. if site=foo supplied and foo's URL is foo.example.com, then http://foo.example.com/path/ is rewritten to /path/
-		$richtextFields = array ('richtext', 'richtextAbbreviated');
+		$richtextFields = array ('richtextLonger', 'richtextAbbreviated');
 		foreach ($articles as $key => $article) {
 			
 			# URL internal
@@ -596,9 +596,9 @@ class news extends frontControllerApplication
 	{
 		# Start with the text; in listing mode this is always unabbreviated
 		if ($listingMode) {
-			$html  = "\n" . $article['richtext'];
+			$html  = "\n" . $article['richtextLonger'];
 		} else {
-			$html  = "\n" . ($article['richtextAbbreviated'] ? $article['richtextAbbreviated'] : $article['richtext']);
+			$html  = "\n" . ($article['richtextAbbreviated'] ? $article['richtextAbbreviated'] : $article['richtextLonger']);
 			if ($article['richtextAbbreviated']) {
 				$html .= "\n<p><a href=\"{$article['articlePermalink']}\">Read more &hellip;</a></p>";
 			}
@@ -681,7 +681,7 @@ class news extends frontControllerApplication
 		# Decorate
 		foreach ($articles as $id => $article) {
 			$articles[$id]['imageHtml'] = $this->articleImage ($article, false);
-			$articles[$id]['articleHtml'] = ($article['richtextAbbreviated'] ? $article['richtextAbbreviated'] : $article['richtext']);
+			$articles[$id]['articleHtml'] = ($article['richtextAbbreviated'] ? $article['richtextAbbreviated'] : $article['richtextLonger']);
 		}
 		
 		# Send the feed
@@ -717,7 +717,7 @@ class news extends frontControllerApplication
 		
 		# Add each entry
 		foreach ($articles as $article) {
-			$articleText = ($article['richtextAbbreviated'] ? $article['richtextAbbreviated'] : $article['richtext']);
+			$articleText = ($article['richtextAbbreviated'] ? $article['richtextAbbreviated'] : $article['richtextLonger']);
 			$xml .= "\n\t<entry>";
 			$xml .= "\n\t\t<title>" . htmlspecialchars ($article['title']) . "</title>";
 			$xml .= "\n\t\t<link href=\"{$_SERVER['_SITE_URL']}{$article['articlePermalink']}\"/>";
