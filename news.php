@@ -664,6 +664,10 @@ class news extends frontControllerApplication
 		# Get the databinding attributes
 		$dataBindingAttributes = $this->formDataBindingAttributes ();
 		
+		# Order most recent first
+		#!# Hacky way, because of the lack of a way to modify $settings in editingTable ()
+		$_GET['direction'] = 'desc';
+		
 		# Delegate to the standard function for editing
 		echo $this->editingTable ($this->settings['table'], $dataBindingAttributes, 'ultimateform');
 	}
