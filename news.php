@@ -141,13 +141,14 @@ class news extends frontControllerApplication
 			  `sites` varchar(255) COLLATE utf8_unicode_ci NOT NULL COMMENT 'Site(s), comma-separated',
 			  `photograph` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Image (if available)',
 			  `imageCredit` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Image credit (if any)',
-			  `richtextLonger` text COLLATE utf8_unicode_ci NOT NULL COMMENT 'Article text (full), including mention of relevant person',
+			  `richtextLonger` text COLLATE utf8_unicode_ci NOT NULL COMMENT 'Article text, including mention of relevant person',
 			  `richtextAbbreviated` text COLLATE utf8_unicode_ci COMMENT 'Abbreviated article text',
 			  `urlInternal` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Webpage on our site, if any',
 			  `urlExternal` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'External webpage giving more info, if any',
 			  `startDate` date NOT NULL COMMENT 'Date to appear on website',
 			  `moniker` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Unique text key (a-z,0-9) (acts as approval field also)',
 			  `frontPageOrder` enum('1','2','3','4','5','6','7','8','9','10') COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Ordering for visibility (1 = highest on page)',
+			  `username` varchar(255) COLLATE utf8_unicode_ci NOT NULL COMMENT 'Submitted by user',
 			  `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Submission date',
 			  UNIQUE KEY `moniker` (`moniker`)
 			) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
@@ -257,6 +258,7 @@ class news extends frontControllerApplication
 			'urlExternal' => array ('placeholder' => 'http://', 'regexp' => '^https?://'),
 			'frontPageOrder' => array ('nullText' => false, ),
 			'moniker' => array ('regexp' => '^([a-z0-9]+)$'),
+			'username' => array ('editable' => false, ),
 		);
 		
 		# Return the attributes
@@ -268,9 +270,9 @@ class news extends frontControllerApplication
 	private function submissionForm ()
 	{
 		# Determine fields to exclude
-		$exclude = array ();
+		$exclude = array ('username');
 		if (!$this->userIsAdministrator ()) {
-			$exclude = array ('moniker', 'richtextAbbreviated', 'frontPageOrder');
+			$exclude = array_merge ($exclude, array ('moniker', 'richtextAbbreviated', 'frontPageOrder'));
 		}
 		
 		# Create the form
@@ -304,6 +306,9 @@ class news extends frontControllerApplication
 		
 		# Remove fixed data
 		unset ($result['email']);
+		
+		# Fix the username
+		$result['username'] = $this->user;
 		
 		# Wipe the photograph filename, and state 1 if present
 		if ($result['photograph']) {
