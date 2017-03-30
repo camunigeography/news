@@ -525,7 +525,8 @@ class news extends frontControllerApplication
 			DATE_FORMAT(startDate, '%D %M, %Y') AS date
 			FROM {$this->dataSource}
 			WHERE
-				    moniker != '' AND moniker IS NOT NULL"
+				    moniker != '' AND moniker IS NOT NULL
+				    AND startDate <= CAST(NOW() AS DATE)"
 				. ($frontpage ? " AND frontPageOrder IS NOT NULL" : '')
 				. " AND sites LIKE :site
 			ORDER BY "
