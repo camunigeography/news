@@ -299,7 +299,7 @@ class news extends frontControllerApplication
 		));
 		
 		# Set to mail the admin
-		$form->setOutputEmail ($this->settings['administratorEmail'], $this->settings['administratorEmail'], 'New news submission', NULL, 'email');
+		$form->setOutputEmail ($this->settings['administratorEmail'], $this->settings['administratorEmail'], 'New news submission from ' . ($this->userName ? $this->userName : $this->user), NULL, 'email');
 		
 		# Obtain the result
 		if (!$result = $form->process ()) {return false;}
