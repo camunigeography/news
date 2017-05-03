@@ -741,7 +741,7 @@ class news extends frontControllerApplication
 		$xml .= "\n</feed>";
 		
 		# Send the feed
-		header ('Content-type: application/atom+xml');
+		header ('Content-type: application/atom+xml; charset=utf-8');
 		echo $xml;
 		
 		# Die to prevent any more output
