@@ -38,6 +38,7 @@
 		AddType application/x-httpd-php .rss
 		php_value auto_prepend_file none
 		php_value auto_append_file none
+		Header Set Content-Type "application/atom+xml; charset=utf-8"
 	</Location>
 	
 	# Image source

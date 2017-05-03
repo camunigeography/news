@@ -742,7 +742,8 @@ class news extends frontControllerApplication
 		$xml .= "\n</feed>";
 		
 		# Send the feed
-		header ('Content-type: application/atom+xml; charset=utf-8');
+		#!# Header is not working, so has been set in .httpd.conf.extract.txt, though this should not be necessary; see possible reasons at: http://stackoverflow.com/questions/2508718/content-type-not-working-in-php
+		header ('Content-Type: application/atom+xml; charset=utf-8');
 		echo $xml;
 		
 		# Die to prevent any more output
