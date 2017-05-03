@@ -33,7 +33,7 @@ class news extends frontControllerApplication
 			'authentication' => false,	// Defined on a per-action basis below
 			'useEditing' => true,
 			'internalHostRegexp' => NULL,
-			'rssTitle' => NULL,
+			'rssTitle' => 'News',
 			'rssImage' => NULL,
 		);
 		
@@ -716,9 +716,10 @@ class news extends frontControllerApplication
 		$fullBaseUrl = "{$_SERVER['_SITE_URL']}{$this->baseUrl}";
 		
 		# Build the XML
+		#!# The title, id and author/name need to take account of the $site setting
 		$xml  = '<' . '?' . 'xml version="1.0" encoding="utf-8"?>';	// Use this syntax to avoid confusing the editor
 		$xml .= "\n<feed xmlns=\"http://www.w3.org/2005/Atom\">";
-		$xml .= "\n\t<title>" . htmlspecialchars ($this->settings['rssTitle']) . "</title>";
+		$xml .= "\n\t<title>" . htmlspecialchars ($this->settings['rssTitle']) . ' - ' . htmlspecialchars ($this->settings['sites'][$site]) . '</title>';
 		$xml .= "\n\t<icon>{$this->settings['rssImage']}</icon>";
 		$xml .= "\n\t<link rel=\"self\" href=\"{$_SERVER['_SITE_URL']}{$this->settings['feedPermalinkUrl']}\"/>";
 		$xml .= "\n\t<updated>" . $this->rfc3339Date () . "</updated>";

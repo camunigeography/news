@@ -9,7 +9,6 @@ $settings = array (
 	'imageLocation' => '/images/news/',	// Equivalent to imageDirectory in URL terms
 	'imageDirectory' => $_SERVER['DOCUMENT_ROOT'] . '/images/news/',
 	'internalHostRegexp' => '.institution.example.org$',
-	'rssTitle' => 'Example organisation - news',
 	'rssImage' => 'http://www.example.org/images/general/logo.gif',
 );
 
