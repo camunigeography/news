@@ -469,9 +469,11 @@ class news extends frontControllerApplication
 		# Build the HTML
 		$html  = '';
 		foreach ($articles as $id => $article) {
+			$html .= "\n\n<div class=\"newsarticle\">";
 			$html .= $this->articleTitle ($article, true);
 			$html .= $this->articleImage ($article, true);
 			$html .= $this->articleBody ($article, true);
+			$html .= "\n</div>";
 		}
 		
 		# Add a link to remainder
@@ -501,9 +503,11 @@ class news extends frontControllerApplication
 		# Build the HTML
 		$html  = '';
 		foreach ($articles as $id => $article) {
+			$html .= "\n\n<div class=\"newsarticle\">";
 			$html .= $this->articleTitle ($article, true);
 			$html .= $this->articleImage ($article, true);
 			$html .= $this->articleBody ($article, true);
+			$html .= "\n</div>";
 		}
 		
 		# Return the HTML
@@ -635,11 +639,11 @@ class news extends frontControllerApplication
 		if (!is_readable ($this->photographDirectoryMain . $this->settings['thumbnailsSubfolder'] . $imageFilename)) {return false;}
 		
 		# Assemble the location in URL terms
-		$location  = $this->settings['imageLocation'] . $this->settings['thumbnailsSubfolder'] . $imageFilename;
+		$location  = $this->settings['imageLocation'] . $imageFilename;
 		
 		# Compile the image
 		$description = htmlspecialchars ($article['title']);
-		$html = "<a href=\"{$article['primaryUrl']}\"><img src=\"{$location}\" alt=\"{$description}\" border=\"0\"" . ($alignright ? ' align="right" class="shiftup"' : '') . ' /></a>';
+		$html = "<p" . ($alignright ? ' class="right"' : '') . "><a href=\"{$article['primaryUrl']}\"><img src=\"{$location}\" alt=\"{$description}\" border=\"0\" /></a></p>";
 		
 		# Return the HTML
 		return $html;
