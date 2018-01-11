@@ -642,8 +642,8 @@ class news extends frontControllerApplication
 		$location  = $this->settings['imageLocation'] . $imageFilename;
 		
 		# Compile the image
-		$description = htmlspecialchars ($article['title']);
-		$html = "<p" . ($alignright ? ' class="right"' : '') . "><a href=\"{$article['primaryUrl']}\"><img src=\"{$location}\" alt=\"{$description}\" border=\"0\" /></a></p>";
+		$imageCredit = htmlspecialchars ($article['imageCredit']);
+		$html = "<p" . ($alignright ? ' class="right"' : '') . "><a href=\"{$article['primaryUrl']}\"><img src=\"{$location}\" alt=\"{$imageCredit}\" title=\"{$imageCredit}\" border=\"0\" /></a></p>";
 		
 		# Return the HTML
 		return $html;
