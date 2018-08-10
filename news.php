@@ -669,7 +669,7 @@ class news extends frontControllerApplication
 	
 	
 	# Admin editing section, substantially delegated to the sinenomine editing component
-	public function editing ($attributes = array (), $deny = false)
+	public function editing ($attributes = array (), $deny = false, $sinenomineExtraSettings = array ())
 	{
 		# Get the databinding attributes
 		$dataBindingAttributes = $this->formDataBindingAttributes ();
