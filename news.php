@@ -478,7 +478,7 @@ class news extends frontControllerApplication
 		
 		# Add a link to remainder
 		$totalArticles = $this->getTotalArticles ();
-		if ($totalArticles > $this->settings['recent']) {
+		if ($totalArticles > $limit) {
 			$html .= "\n<hr id=\"browseearlier\" />";
 			#!# Ideally this would link to the next in the list
 			$html .= "\n<p><a href=\"{$this->settings['archivePermalinkUrl']}\">Browse earlier articles&hellip;</a></p>";
