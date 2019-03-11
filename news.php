@@ -28,7 +28,7 @@ class news extends frontControllerApplication
 			'headingLevelPortal' => 3,	// Heading level (e.g. 3 for h3) for the news titles
 			'headingLevelListing' => 2,	// Heading level (e.g. 2 for h2) for the news titles
 			'newsPermalinkUrl' => '/news/',
-			'feedPermalinkUrl' => '/news/feed.atom.xml',
+			'feedPermalinkUrl' => '/news/feed.rss',
 			'archivePermalinkUrl' => '/news/previous.html',
 			'authentication' => false,	// Defined on a per-action basis below
 			'useEditing' => true,
@@ -415,7 +415,7 @@ class news extends frontControllerApplication
 		
 		# Add Atom link if the output type is HTML
 		if ($this->exportFormats[$format]['extension'] == 'html') {
-			$html .= "\n<p class=\"right\"><a href=\"{$this->settings['feedPermalinkUrl']}\"><img src=\"/images/icons/feed.png\" alt=\"Atom icon\" title=\"Atom feed\" class=\"icon\" /></a></p>";
+			$html .= "\n<p class=\"right\"><a href=\"{$this->settings['feedPermalinkUrl']}\"><img src=\"/images/icons/feed.png\" alt=\"Atom icon\" title=\"RSS feed\" class=\"icon\" /></a></p>";
 		}
 		
 		# Construct the HTML based on the selected format
