@@ -69,8 +69,14 @@ class news extends frontControllerApplication
 			'frontpage' => false,
 		),
 		'feed'		=> array (
+			'name' => 'RSS feed',
+			'extension' => '.rss',
+			'limit' => 24,
+			'frontpage' => false,
+		),
+		'feed.atom'		=> array (
 			'name' => 'Atom feed',
-			'extension' => 'atom.xml',
+			'extension' => '.xml',
 			'limit' => 24,
 			'frontpage' => false,
 		),
@@ -413,7 +419,7 @@ class news extends frontControllerApplication
 		}
 		
 		# Construct the HTML based on the selected format
-		$function = 'export' . ucfirst ($format);
+		$function = 'export' . ucfirst (str_replace ('.', '', $format));
 		$html .= $this->{$function} ($site, $limit, $this->exportFormats[$format]['frontpage']);
 		
 		# Surround with a div (frontControllerApplication will have stripped the 'div' setting when the export flag is on)
@@ -718,8 +724,71 @@ class news extends frontControllerApplication
 	}
 	
 	
-	# Atom news feed
+	# RSS 2.0 feed
 	private function exportFeed ($site, $limit, $frontpage)
+	{
+		# End if no/invalid site
+		if (!$site) {return false;}
+		
+		# Get the articles
+		$articles = $this->getArticles ($site, $limit, $frontpage);
+		
+		# Define the base page
+		$fullBaseUrl = "{$_SERVER['_SITE_URL']}{$this->baseUrl}";
+		
+		# Build the XML
+		#!# The title, id and author/name need to take account of the $site setting
+		$xml  = '<' . '?' . 'xml version="1.0" encoding="utf-8"?>';	// Use this syntax to avoid confusing the editor
+		$xml .= "\n<rss version=\"2.0\" xmlns:atom=\"http://www.w3.org/2005/Atom\">";
+		$xml .= "\n\t<channel>";
+		$xml .= "\n\t\t<title>" . htmlspecialchars ($this->settings['feedTitle']) . ' - ' . htmlspecialchars ($this->settings['sites'][$site]) . '</title>';
+		$xml .= "\n\t\t<description>" . htmlspecialchars ($this->settings['feedTitle']) . ' - ' . htmlspecialchars ($this->settings['sites'][$site]) . '</description>';
+		$xml .= "\n\t\t<link>{$_SERVER['_SITE_URL']}{$this->settings['feedPermalinkUrl']}</link>";
+		$xml .= "\n\t\t<lastBuildDate>" . $this->rfc822Date () . "</lastBuildDate>";
+		$xml .= "\n\t\t<pubDate>" . $this->rfc822Date () . "</pubDate>";
+		$xml .= "\n\t\t<ttl>1800</ttl>";
+		
+		# Add each entry
+		foreach ($articles as $article) {
+			$articleText = ($article['richtextAbbreviated'] ? $article['richtextAbbreviated'] : $article['richtextLonger']);
+			$xml .= "\n\t\t<item>";
+			$xml .= "\n\t\t\t<title>" . htmlspecialchars ($article['title']) . "</title>";
+			$xml .= "\n\t\t\t<description>" . str_replace ("\n", ' ', trim (htmlspecialchars (strip_tags ($articleText)))) . '</description>';
+			if ($imageLocation = $this->imageLocation ($article)) {
+				$xml .= "\n\t\t\t<media:content xmlns:media=\"http://search.yahoo.com/mrss/\" url=\"{$_SERVER['_SITE_URL']}{$imageLocation}\" medium=\"image\" type=\"image/jpeg\" width=\"150\" height=\"150\" />";	// See: https://stackoverflow.com/questions/483675/images-in-rss-feed
+			}
+			$xml .= "\n\t\t\t<guid isPermaLink=\"false\">{$_SERVER['_SITE_URL']}{$article['articlePermalink']}</guid>";
+			$xml .= "\n\t\t\t<pubDate>" . $this->rfc822Date (strtotime ($article['startDate'])) . '</pubDate>';
+			$xml .= "\n\t\t</item>\n";
+		}
+		
+		# Close the feed
+		$xml .= "\n\t</channel>";
+		$xml .= "\n\t</rss>";
+		
+		# Send the feed
+		#!# Header is not working, so has been set in .httpd.conf.extract.txt, though this should not be necessary; see possible reasons at: http://stackoverflow.com/questions/2508718/content-type-not-working-in-php
+		header ('Content-Type: application/rss+xml; charset=utf-8');
+		echo $xml;
+		
+		# Die to prevent any more output
+		exit ();
+	}
+	
+	
+	# RFC-822 Date-time as required by RSS 2.0
+	private function rfc822Date ($timestamp = 0)
+	{
+		if (!$timestamp) {$timestamp = time ();}
+		$datetime = date ('r', $timestamp);
+		
+		# Return the data
+		return $datetime;
+	}
+	
+	
+	# Atom feed
+	private function exportFeedatom ($site, $limit, $frontpage)
 	{
 		# End if no/invalid site
 		if (!$site) {return false;}
