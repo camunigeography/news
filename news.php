@@ -650,14 +650,18 @@ class news extends frontControllerApplication
 	
 	
 	# Function to determine the image location
-	private function imageLocation ($article)
+	private function imageLocation ($article, &$width = '', &$height = '')
 	{
 		# End if none
 		if (!$article['photograph']) {return false;}
 		
 		# End if not readable
 		$imageFilename = $article['id'] . '.jpg';
-		if (!is_readable ($this->photographDirectoryMain . $this->settings['thumbnailsSubfolder'] . $imageFilename)) {return false;}
+		$file = $this->photographDirectoryMain . $this->settings['thumbnailsSubfolder'] . $imageFilename;
+		if (!is_readable ($file)) {return false;}
+		
+		# Get the width and height
+		list ($width, $height, $type, $attr) = getimagesize ($file);
 		
 		# Assemble the location in URL terms
 		$location = $this->settings['imageLocation'] . $imageFilename;
@@ -754,8 +758,8 @@ class news extends frontControllerApplication
 			$xml .= "\n\t\t<item>";
 			$xml .= "\n\t\t\t<title>" . htmlspecialchars ($article['title']) . "</title>";
 			$xml .= "\n\t\t\t<description>" . str_replace ("\n", ' ', trim (htmlspecialchars (strip_tags ($articleText)))) . '</description>';
-			if ($imageLocation = $this->imageLocation ($article)) {
-				$xml .= "\n\t\t\t<media:content xmlns:media=\"http://search.yahoo.com/mrss/\" url=\"{$_SERVER['_SITE_URL']}{$imageLocation}\" medium=\"image\" type=\"image/jpeg\" width=\"150\" height=\"150\" />";	// See: https://stackoverflow.com/questions/483675/images-in-rss-feed
+			if ($imageLocation = $this->imageLocation ($article, $width, $height)) {
+				$xml .= "\n\t\t\t<media:content xmlns:media=\"http://search.yahoo.com/mrss/\" url=\"{$_SERVER['_SITE_URL']}{$imageLocation}\" medium=\"image\" type=\"image/jpeg\" width=\"{$width}\" height=\"{$height}\" />";	// See: https://stackoverflow.com/questions/483675/images-in-rss-feed
 			}
 			$xml .= "\n\t\t\t<guid isPermaLink=\"false\">{$_SERVER['_SITE_URL']}{$article['articlePermalink']}</guid>";
 			$xml .= "\n\t\t\t<pubDate>" . $this->rfc822Date (strtotime ($article['startDate'])) . '</pubDate>';
