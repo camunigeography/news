@@ -26,16 +26,16 @@
 	
 	# Exporting
 	RewriteRule ^$applicationBaseUrl/export/([a-z]+).html$ $applicationBaseUrl/index.html?action=exportformat&item=$1 [L,QSA]
-	RewriteRule ^$applicationBaseUrl/export/(feed).rss$ $applicationBaseUrl/index.html?action=exportformat&item=$1 [L,QSA]
+	RewriteRule ^$applicationBaseUrl/export/(feed).atom.xml$ $applicationBaseUrl/index.html?action=exportformat&item=$1 [L,QSA]
 	RewriteRule ^$applicationBaseUrl/export/(json).json$ $applicationBaseUrl/index.html?action=exportformat&item=$1 [L,QSA]
-	<LocationMatch ^$applicationBaseUrl/export/(([a-z]+).html|feed.rss|json.json)$>
+	<LocationMatch ^$applicationBaseUrl/export/(([a-z]+).html|feed.atom.xml|json.json)$>
 		php_value auto_prepend_file none
 		php_value auto_append_file none
 	</LocationMatch>
 	
 	# Client-side
-	<Location /news/feed.rss>
-		AddType application/x-httpd-php .rss
+	<Location /news/feed.atom.xml>
+		AddType application/x-httpd-php .atom.xml
 		php_value auto_prepend_file none
 		php_value auto_append_file none
 		Header Set Content-Type "application/atom+xml; charset=utf-8"

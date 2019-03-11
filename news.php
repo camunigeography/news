@@ -28,13 +28,13 @@ class news extends frontControllerApplication
 			'headingLevelPortal' => 3,	// Heading level (e.g. 3 for h3) for the news titles
 			'headingLevelListing' => 2,	// Heading level (e.g. 2 for h2) for the news titles
 			'newsPermalinkUrl' => '/news/',
-			'feedPermalinkUrl' => '/news/feed.rss',
+			'feedPermalinkUrl' => '/news/feed.atom.xml',
 			'archivePermalinkUrl' => '/news/previous.html',
 			'authentication' => false,	// Defined on a per-action basis below
 			'useEditing' => true,
 			'internalHostRegexp' => NULL,
-			'rssTitle' => 'News',
-			'rssImage' => NULL,
+			'feedTitle' => 'News',
+			'feedImage' => NULL,
 		);
 		
 		# Return the defaults
@@ -69,8 +69,8 @@ class news extends frontControllerApplication
 			'frontpage' => false,
 		),
 		'feed'		=> array (
-			'name' => 'RSS feed',
-			'extension' => 'rss',
+			'name' => 'Atom feed',
+			'extension' => 'atom.xml',
 			'limit' => 24,
 			'frontpage' => false,
 		),
@@ -407,9 +407,9 @@ class news extends frontControllerApplication
 			$html .= "\n<p id=\"submitlink\" class=\"actions\"><a href=\"{$this->baseUrl}/\"><img src=\"/images/icons/add.png\" class=\"icon\" /> Submit news</a></p>";
 		}
 		
-		# Add RSS link if the output type is HTML
+		# Add Atom link if the output type is HTML
 		if ($this->exportFormats[$format]['extension'] == 'html') {
-			$html .= "\n<p class=\"right\"><a href=\"{$this->settings['feedPermalinkUrl']}\"><img src=\"/images/icons/feed.png\" alt=\"RSS icon\" title=\"RSS feed\" class=\"icon\" /></a></p>";
+			$html .= "\n<p class=\"right\"><a href=\"{$this->settings['feedPermalinkUrl']}\"><img src=\"/images/icons/feed.png\" alt=\"Atom icon\" title=\"Atom feed\" class=\"icon\" /></a></p>";
 		}
 		
 		# Construct the HTML based on the selected format
@@ -707,7 +707,7 @@ class news extends frontControllerApplication
 	}
 	
 	
-	# RSS (Atom) news feed
+	# Atom news feed
 	private function exportFeed ($site, $limit, $frontpage)
 	{
 		# End if no/invalid site
@@ -723,8 +723,8 @@ class news extends frontControllerApplication
 		#!# The title, id and author/name need to take account of the $site setting
 		$xml  = '<' . '?' . 'xml version="1.0" encoding="utf-8"?>';	// Use this syntax to avoid confusing the editor
 		$xml .= "\n<feed xmlns=\"http://www.w3.org/2005/Atom\">";
-		$xml .= "\n\t<title>" . htmlspecialchars ($this->settings['rssTitle']) . ' - ' . htmlspecialchars ($this->settings['sites'][$site]) . '</title>';
-		$xml .= "\n\t<icon>{$this->settings['rssImage']}</icon>";
+		$xml .= "\n\t<title>" . htmlspecialchars ($this->settings['feedTitle']) . ' - ' . htmlspecialchars ($this->settings['sites'][$site]) . '</title>';
+		$xml .= "\n\t<icon>{$this->settings['feedImage']}</icon>";
 		$xml .= "\n\t<link rel=\"self\" href=\"{$_SERVER['_SITE_URL']}{$this->settings['feedPermalinkUrl']}\"/>";
 		$xml .= "\n\t<updated>" . $this->rfc3339Date () . "</updated>";
 		$xml .= "\n\t<id>{$_SERVER['_SITE_URL']}{$this->settings['newsPermalinkUrl']}</id>";
