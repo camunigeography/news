@@ -631,6 +631,21 @@ class news extends frontControllerApplication
 	# Function to compile the article image tag
 	public function articleImage ($article, $alignright = false)
 	{
+		# Obtain the path, or end if none
+		if (!$imageLocation = $this->imageLocation ($article)) {return false;}
+		
+		# Compile the image
+		$imageCredit = htmlspecialchars ($article['imageCredit']);
+		$html = "<p" . ($alignright ? ' class="right"' : '') . "><a href=\"{$article['primaryUrl']}\"><img src=\"{$imageLocation}\" alt=\"{$imageCredit}\" title=\"{$imageCredit}\" border=\"0\" /></a></p>";
+		
+		# Return the HTML
+		return $html;
+	}
+	
+	
+	# Function to determine the image location
+	private function imageLocation ($article)
+	{
 		# End if none
 		if (!$article['photograph']) {return false;}
 		
@@ -639,14 +654,10 @@ class news extends frontControllerApplication
 		if (!is_readable ($this->photographDirectoryMain . $this->settings['thumbnailsSubfolder'] . $imageFilename)) {return false;}
 		
 		# Assemble the location in URL terms
-		$location  = $this->settings['imageLocation'] . $imageFilename;
+		$location = $this->settings['imageLocation'] . $imageFilename;
 		
-		# Compile the image
-		$imageCredit = htmlspecialchars ($article['imageCredit']);
-		$html = "<p" . ($alignright ? ' class="right"' : '') . "><a href=\"{$article['primaryUrl']}\"><img src=\"{$location}\" alt=\"{$imageCredit}\" title=\"{$imageCredit}\" border=\"0\" /></a></p>";
-		
-		# Return the HTML
-		return $html;
+		# Return the location
+		return $location;
 	}
 	
 	
