@@ -289,6 +289,9 @@ class news extends frontControllerApplication
 			'formCompleteText' => 'Thanks for submitting this article. The Webmaster will review it and confirm when it is online.',
 		));
 		
+		# Make clear that submissions are moderated
+		$form->heading ('p', 'All submissions are moderated and checked for suitability for publication.');
+		
 		# Databind the form
 		$form->dataBinding (array (
 			'database' => $this->settings['database'],
