@@ -153,7 +153,7 @@ class news extends frontControllerApplication
 			  `urlExternal` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'External webpage giving more info, if any',
 			  `startDate` date NOT NULL COMMENT 'Date to appear on website',
 			  `moniker` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Unique text key (a-z,0-9) (acts as approval field also)',
-			  `frontPageOrder` enum('1','2','3','4','5','6','7','8','9','10') COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Ordering for visibility (1 = highest on page)',
+			  `frontPageOrder` enum('1','2','3','4','5','6','7','8','9','10') COLLATE utf8_unicode_ci DEFAULT '5' COMMENT 'Ordering for visibility (1 = highest on page)',
 			  `username` varchar(255) COLLATE utf8_unicode_ci NOT NULL COMMENT 'Submitted by user',
 			  `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Submission date',
 			  UNIQUE KEY `moniker` (`moniker`)
