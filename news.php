@@ -200,7 +200,8 @@ class news extends frontControllerApplication
 		if (!$this->userDetails = $this->userDetails ()) {
 			$requiresAuth = (isSet ($this->actions[$this->action]['authentication']) && $this->actions[$this->action]['authentication']);
 			if ($requiresAuth) {	// Use authentication check for authorisation
-				echo "\n<p>You do not seem to be a registered user. Please <a href=\"{$this->baseUrl}/feedback.html\">contact the Webmaster</a> if this is incorrect.</p>";
+				$html = "\n<p>You do not seem to be a registered user. Please <a href=\"{$this->baseUrl}/feedback.html\">contact the Webmaster</a> if this is incorrect.</p>";
+				echo $html;
 				return false;
 			}
 		}
@@ -235,19 +236,25 @@ class news extends frontControllerApplication
 	public function home ()
 	{
 		# Start the page
-		echo "\n\n" . "<p>Welcome, {$this->userDetails['forename']}, to the news submission system.</p>";
+		$html  = "\n\n" . "<p>Welcome, {$this->userDetails['forename']}, to the news submission system.</p>";
 		
 		# Show the reporting screen
-		echo "\n<h2>Submit an item of news</h2>";
-		echo $this->submissionForm ();
+		$html .= "\n<h2>Submit an item of news</h2>";
+		$html .= $this->submissionForm ();
+		
+		# Show the HTML
+		echo $html;
 	}
 	
 	
 	# Submit page
 	public function submit ()
 	{
-		# Show the report form
-		echo $this->submissionForm ();
+		# Create the report form
+		$html = $this->submissionForm ();
+		
+		# Show the HTML
+		echo $html;
 	}
 	
 	
@@ -277,6 +284,9 @@ class news extends frontControllerApplication
 	# Submission form
 	private function submissionForm ()
 	{
+		# Start the HTML
+		$html = '';
+		
 		# Determine fields to exclude
 		$exclude = array ('username');
 		if (!$this->userIsAdministrator ()) {
@@ -313,7 +323,9 @@ class news extends frontControllerApplication
 		$form->setOutputEmail ($this->settings['webmaster'], $this->settings['administratorEmail'], 'New news submission from ' . ($this->userName ? $this->userName : $this->user) . ': {title}', NULL, 'email');
 		
 		# Obtain the result
-		if (!$result = $form->process ()) {return false;}
+		if (!$result = $form->process ($html)) {
+			return $html;
+		}
 		
 		# Remove fixed data
 		unset ($result['email']);
@@ -351,7 +363,8 @@ class news extends frontControllerApplication
 			}
 		}
 		
-		
+		# Return the HTML
+		return $html;
 	}
 	
 	
@@ -705,7 +718,10 @@ class news extends frontControllerApplication
 		$_GET['direction'] = 'desc';
 		
 		# Delegate to the standard function for editing
-		echo $this->editingTable ($this->settings['table'], $dataBindingAttributes, 'ultimateform');
+		$html = $this->editingTable ($this->settings['table'], $dataBindingAttributes, 'ultimateform');
+		
+		# Show the HTML
+		echo $html;
 	}
 	
 	
