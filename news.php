@@ -518,7 +518,7 @@ class news extends frontControllerApplication
 		foreach ($articles as $id => $article) {
 			$html .= "\n\n<div class=\"newsarticle\">";
 			$html .= $this->articleTitle ($article, true);
-			$html .= $this->articleImage ($article, true);
+			$html .= "\n" . $this->articleImage ($article, true);
 			$html .= $this->articleBody ($article, true);
 			$html .= "\n</div>";
 		}
@@ -681,7 +681,7 @@ class news extends frontControllerApplication
 		
 		# Compile the image
 		$imageCredit = htmlspecialchars ($article['imageCredit']);
-		$html = "\n<p" . ($alignright ? ' class="right"' : '') . "><a href=\"{$article['primaryUrl']}\"><img src=\"{$imageLocation}\" alt=\"{$imageCredit}\" title=\"{$imageCredit}\" border=\"0\" /></a></p>";
+		$html = "<p" . ($alignright ? ' class="right"' : '') . "><a href=\"{$article['primaryUrl']}\"><img src=\"{$imageLocation}\" alt=\"{$imageCredit}\" title=\"{$imageCredit}\" border=\"0\" /></a></p>";
 		
 		# Return the HTML
 		return $html;
