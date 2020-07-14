@@ -16,6 +16,7 @@ class news extends frontControllerApplication
 		$defaults = array (
 			'database' => 'news',
 			'table' => 'articles',
+			'databaseStrictWhere' => true,
 			'administrators' => true,
 			'imageDirectory' => NULL,
 			'imageLocation' => NULL,	// Equivalent to imageDirectory in URL terms
