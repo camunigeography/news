@@ -43,47 +43,6 @@ class news extends frontControllerApplication
 	}
 	
 	
-	# Define the available formats and their properties
-	private $exportFormats = array (
-		'frontpage'	=> array (
-			'name' => 'Front page listing (HTML)',
-			'extension' => 'html',
-			'limit' => false,
-			'frontpage' => true,
-		),
-		'json'		=> array (
-			'name' => 'Front page listing (JSON)',
-			'extension' => 'json',
-			'limit' => 5,
-			'frontpage' => true,
-		),
-		'recent'	=> array (
-			'name' => 'Recent news full HTML page',
-			'extension' => 'html',
-			'limit' => 10,
-			'frontpage' => false,
-		),
-		'archive'	=> array (
-			'name' => 'Complete archive HTML page',
-			'extension' => 'html',
-			'limit' => false,
-			'frontpage' => false,
-		),
-		'feed'		=> array (
-			'name' => 'RSS feed',
-			'extension' => 'rss',
-			'limit' => 24,
-			'frontpage' => false,
-		),
-		'feed.atom'		=> array (
-			'name' => 'Atom feed',
-			'extension' => 'xml',
-			'limit' => 24,
-			'frontpage' => false,
-		),
-	);
-	
-	
 	# Function assign additional actions
 	public function actions ()
 	{
@@ -168,6 +127,47 @@ class news extends frontControllerApplication
 			INSERT INTO `settings` (`id`, `sites`) VALUES (1, 'example,Example');
 		";
 	}
+	
+	
+	# Define the available formats and their properties
+	private $exportFormats = array (
+		'frontpage'	=> array (
+			'name' => 'Front page listing (HTML)',
+			'extension' => 'html',
+			'limit' => false,
+			'frontpage' => true,
+		),
+		'json'		=> array (
+			'name' => 'Front page listing (JSON)',
+			'extension' => 'json',
+			'limit' => 5,
+			'frontpage' => true,
+		),
+		'recent'	=> array (
+			'name' => 'Recent news full HTML page',
+			'extension' => 'html',
+			'limit' => 10,
+			'frontpage' => false,
+		),
+		'archive'	=> array (
+			'name' => 'Complete archive HTML page',
+			'extension' => 'html',
+			'limit' => false,
+			'frontpage' => false,
+		),
+		'feed'		=> array (
+			'name' => 'RSS feed',
+			'extension' => 'rss',
+			'limit' => 24,
+			'frontpage' => false,
+		),
+		'feed.atom'		=> array (
+			'name' => 'Atom feed',
+			'extension' => 'xml',
+			'limit' => 24,
+			'frontpage' => false,
+		),
+	);
 	
 	
 	# Additional initialisation, pre-actions
