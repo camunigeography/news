@@ -23,6 +23,7 @@ class news extends frontControllerApplication
 			'userCallback' => NULL,		// Callback function
 			'divId' => 'newsarticles',
 			'h1' => '<h1>News submission</h1>',
+			'tabUlClass' => 'tabsflat',
 			'imageWidthMain' => 300,
 			'imageWidthThumbnail' => 150,
 			'headingLevelPortal' => 3,	// Heading level (e.g. 3 for h3) for the news titles
