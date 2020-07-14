@@ -387,7 +387,11 @@ class news extends frontControllerApplication
 		$html = '';
 		
 		# Note optional parameters
-		$html .= "\n<p>Optional parameter: <tt>limit=<em>&lt;int&gt;</em></tt> (default as listed below).</p>";
+		$html .= "\n<p>Optional parameters:</p>
+		<ul>
+			<li><tt>limit=<em>&lt;int&gt;</em></tt> (default as listed below).</li>
+			<li><tt>REMOTE_ADDR=<em>&lt;[ip]&gt;</em></tt> IP for forwarding.</li>
+		</ul>";
 		
 		# Create the list
 		foreach ($this->settings['sites'] as $site => $label) {
