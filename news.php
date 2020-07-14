@@ -123,7 +123,7 @@ class news extends frontControllerApplication
 			-- Settings
 			CREATE TABLE `settings` (
 			  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'Automatic key (ignored)' PRIMARY KEY,
-			  `sites` text COLLATE utf8_unicode_ci NOT NULL COMMENT 'Sites available, one per line, as moniker,label'
+			  `sites` text COLLATE utf8_unicode_ci NOT NULL COMMENT 'Sites available, one per line, as moniker,label,URL'
 			) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Settings';
 			INSERT INTO `settings` (`id`, `sites`) VALUES (1, 'example,Example');
 		";
