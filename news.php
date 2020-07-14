@@ -275,6 +275,7 @@ class news extends frontControllerApplication
 			'displayDescriptions' => false,
 			'databaseConnection' => $this->databaseConnection,
 			'size' => 70,
+			'div' => 'ultimateform horizontalonly',
 			'formCompleteText' => 'Thanks for submitting this article. The Webmaster will review it and confirm when it is online.',
 		));
 		
