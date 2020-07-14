@@ -352,7 +352,7 @@ class news extends frontControllerApplication
 		# Define the attributes
 		$attributes = array (
 			'photograph' => array ('directory' => $this->photographDirectoryOriginals, 'forcedFileName' => $this->user, 'allowedExtensions' => array ('jpg'), 'lowercaseExtension' => true, 'thumbnail' => true, 'draganddrop' => true, ),
-			#!# Ideally there would be some way to define a set of domain names that are treated as 'internal' so that http://www.example.org/foo/ could be entered rather than /foo/ to avoid external links being created
+			#!# Ideally there would be some way to define a set of domain names that are treated as 'internal' so that https://www.example.org/foo/ could be entered rather than /foo/ to avoid external links being created
 			'richtextLonger' => array ('editorToolbarSet' => 'BasicLonger', 'width' => 600, 'height' => 300, 'externalLinksTarget' => false, ),
 			'richtextAbbreviated' => array ('editorToolbarSet' => 'BasicLonger', 'width' => 600, 'height' => 180, 'maxlength' => 1000, 'externalLinksTarget' => false, ),
 			'sites' => array ('type' => 'checkboxes', 'values' => $this->settings['sites'], 'separator' => ',', 'defaultPresplit' => true, 'output' => array ('processing' => 'special-setdatatype'), ),
@@ -563,7 +563,7 @@ class news extends frontControllerApplication
 		';';
 		$articles = $this->databaseConnection->getData ($query, $this->dataSource, true, $preparedStatementValues);
 		
-		# Simplify each URL present in the data for the client site requesting (i.e. chopping the server name part if on the same site); e.g. if site=foo supplied and foo's URL is foo.example.com, then http://foo.example.com/path/ is rewritten to /path/
+		# Simplify each URL present in the data for the client site requesting (i.e. chopping the server name part if on the same site); e.g. if site=foo supplied and foo's URL is foo.example.com, then https://foo.example.com/path/ is rewritten to /path/
 		$richtextFields = array ('richtextLonger', 'richtextAbbreviated');
 		foreach ($articles as $key => $article) {
 			
@@ -791,7 +791,7 @@ class news extends frontControllerApplication
 		$xml .= "\n\t</rss>";
 		
 		# Send the feed
-		#!# Header is not working, so has been set in .httpd.conf.extract.txt, though this should not be necessary; see possible reasons at: http://stackoverflow.com/questions/2508718/content-type-not-working-in-php
+		#!# Header is not working, so has been set in .httpd.conf.extract.txt, though this should not be necessary; see possible reasons at: https://stackoverflow.com/questions/2508718/content-type-not-working-in-php
 		header ('Content-Type: application/rss+xml; charset=utf-8');
 		echo $xml;
 		
@@ -850,7 +850,7 @@ class news extends frontControllerApplication
 		$xml .= "\n</feed>";
 		
 		# Send the feed
-		#!# Header is not working, so has been set in .httpd.conf.extract.txt, though this should not be necessary; see possible reasons at: http://stackoverflow.com/questions/2508718/content-type-not-working-in-php
+		#!# Header is not working, so has been set in .httpd.conf.extract.txt, though this should not be necessary; see possible reasons at: https://stackoverflow.com/questions/2508718/content-type-not-working-in-php
 		header ('Content-Type: application/atom+xml; charset=utf-8');
 		echo $xml;
 		
