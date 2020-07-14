@@ -71,13 +71,13 @@ class news extends frontControllerApplication
 		),
 		'feed'		=> array (
 			'name' => 'RSS feed',
-			'extension' => '.rss',
+			'extension' => 'rss',
 			'limit' => 24,
 			'frontpage' => false,
 		),
 		'feed.atom'		=> array (
 			'name' => 'Atom feed',
-			'extension' => '.xml',
+			'extension' => 'xml',
 			'limit' => 24,
 			'frontpage' => false,
 		),
