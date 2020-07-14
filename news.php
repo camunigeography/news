@@ -360,7 +360,7 @@ class news extends frontControllerApplication
 			'startDate' => array ('default' => 'timestamp', 'picker' => true, ),
 			'urlInternal' => array ('placeholder' => 'https://', 'regexp' => '^https?://'),
 			'urlExternal' => array ('placeholder' => 'https://', 'regexp' => '^https?://'),
-			'moniker' => array ('regexp' => '^([a-z0-9]+)$'),
+			'moniker' => array ('regexp' => '^([a-z0-9]+)$', 'size' => 30, ),
 			'username' => array ('editable' => false, ),
 		);
 		
