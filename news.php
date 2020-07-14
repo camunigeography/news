@@ -114,7 +114,7 @@ class news extends frontControllerApplication
 			  `urlExternal` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'External webpage giving more info, if any',
 			  `startDate` date NOT NULL COMMENT 'Date to appear on website',
 			  `moniker` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Unique text key (a-z,0-9) (acts as approval field also)',
-			  `frontPageOrder` enum('1','2','3','4','5','6','7','8','9','10') COLLATE utf8_unicode_ci DEFAULT '5' COMMENT 'Ordering for visibility (1 = highest on page)',
+			  `pinnedFrontPage` INT(1) NULL DEFAULT NULL COMMENT 'Pin to top, on front page?',
 			  `username` varchar(255) COLLATE utf8_unicode_ci NOT NULL COMMENT 'Submitted by user',
 			  `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Submission date',
 			  UNIQUE KEY `moniker` (`moniker`)
@@ -267,7 +267,7 @@ class news extends frontControllerApplication
 		# Determine fields to exclude
 		$exclude = array ('username');
 		if (!$this->userIsAdministrator ()) {
-			$exclude = array_merge ($exclude, array ('moniker', 'richtextAbbreviated', 'frontPageOrder'));
+			$exclude = array_merge ($exclude, array ('moniker', 'richtextAbbreviated', 'pinnedFrontPage'));
 		}
 		
 		# Create the form
@@ -288,6 +288,7 @@ class news extends frontControllerApplication
 			'intelligence' => true,
 			'exclude' => $exclude,
 			'attributes' => $this->formDataBindingAttributes (),
+			'int1ToCheckbox' => true,
 		));
 		$form->email (array (
 			'name' => 'email',
@@ -358,7 +359,6 @@ class news extends frontControllerApplication
 			'startDate' => array ('default' => 'timestamp', 'picker' => true, ),
 			'urlInternal' => array ('placeholder' => 'https://', 'regexp' => '^https?://'),
 			'urlExternal' => array ('placeholder' => 'https://', 'regexp' => '^https?://'),
-			'frontPageOrder' => array ('nullText' => false, ),
 			'moniker' => array ('regexp' => '^([a-z0-9]+)$'),
 			'username' => array ('editable' => false, ),
 		);
@@ -555,10 +555,9 @@ class news extends frontControllerApplication
 			WHERE
 				    moniker != '' AND moniker IS NOT NULL
 				    AND startDate <= CAST(NOW() AS DATE)"
-				. ($frontpage ? " AND frontPageOrder IS NOT NULL" : '')
 				. " AND sites LIKE :site
 			ORDER BY "
-				. ($frontpage ? 'frontPageOrder ASC, ' : '')
+				. ($frontpage ? 'pinnedFrontPage DESC, ' : '')		// 1 then NULL
 				. "startDate DESC, timestamp DESC "
 			. ($limit ? "LIMIT {$limit} " : '') .
 		';';
