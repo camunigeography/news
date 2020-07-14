@@ -258,29 +258,6 @@ class news extends frontControllerApplication
 	}
 	
 	
-	# Helper function to define the dataBinding attributes
-	private function formDataBindingAttributes ()
-	{
-		# Define the attributes
-		$attributes = array (
-			'photograph' => array ('directory' => $this->photographDirectoryOriginals, 'forcedFileName' => $this->user, 'allowedExtensions' => array ('jpg'), 'lowercaseExtension' => true, 'thumbnail' => true, 'draganddrop' => true, ),
-			#!# Ideally there would be some way to define a set of domain names that are treated as 'internal' so that http://www.example.org/foo/ could be entered rather than /foo/ to avoid external links being created
-			'richtextLonger' => array ('editorToolbarSet' => 'BasicLonger', 'width' => 600, 'height' => 300, 'externalLinksTarget' => false, ),
-			'richtextAbbreviated' => array ('editorToolbarSet' => 'BasicLonger', 'width' => 600, 'height' => 180, 'maxlength' => 1000, 'externalLinksTarget' => false, ),
-			'sites' => array ('type' => 'checkboxes', 'values' => $this->settings['sites'], 'separator' => ',', 'defaultPresplit' => true, 'output' => array ('processing' => 'special-setdatatype'), ),
-			'startDate' => array ('default' => 'timestamp', 'picker' => true, ),
-			'urlInternal' => array ('placeholder' => 'https://', 'regexp' => '^https?://'),
-			'urlExternal' => array ('placeholder' => 'https://', 'regexp' => '^https?://'),
-			'frontPageOrder' => array ('nullText' => false, ),
-			'moniker' => array ('regexp' => '^([a-z0-9]+)$'),
-			'username' => array ('editable' => false, ),
-		);
-		
-		# Return the attributes
-		return $attributes;
-	}
-	
-	
 	# Submission form
 	private function submissionForm ()
 	{
@@ -365,6 +342,29 @@ class news extends frontControllerApplication
 		
 		# Return the HTML
 		return $html;
+	}
+	
+	
+	# Helper function to define the dataBinding attributes
+	private function formDataBindingAttributes ()
+	{
+		# Define the attributes
+		$attributes = array (
+			'photograph' => array ('directory' => $this->photographDirectoryOriginals, 'forcedFileName' => $this->user, 'allowedExtensions' => array ('jpg'), 'lowercaseExtension' => true, 'thumbnail' => true, 'draganddrop' => true, ),
+			#!# Ideally there would be some way to define a set of domain names that are treated as 'internal' so that http://www.example.org/foo/ could be entered rather than /foo/ to avoid external links being created
+			'richtextLonger' => array ('editorToolbarSet' => 'BasicLonger', 'width' => 600, 'height' => 300, 'externalLinksTarget' => false, ),
+			'richtextAbbreviated' => array ('editorToolbarSet' => 'BasicLonger', 'width' => 600, 'height' => 180, 'maxlength' => 1000, 'externalLinksTarget' => false, ),
+			'sites' => array ('type' => 'checkboxes', 'values' => $this->settings['sites'], 'separator' => ',', 'defaultPresplit' => true, 'output' => array ('processing' => 'special-setdatatype'), ),
+			'startDate' => array ('default' => 'timestamp', 'picker' => true, ),
+			'urlInternal' => array ('placeholder' => 'https://', 'regexp' => '^https?://'),
+			'urlExternal' => array ('placeholder' => 'https://', 'regexp' => '^https?://'),
+			'frontPageOrder' => array ('nullText' => false, ),
+			'moniker' => array ('regexp' => '^([a-z0-9]+)$'),
+			'username' => array ('editable' => false, ),
+		);
+		
+		# Return the attributes
+		return $attributes;
 	}
 	
 	
