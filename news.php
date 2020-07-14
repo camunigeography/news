@@ -37,6 +37,7 @@ class news extends frontControllerApplication
 			'internalHostRegexp' => NULL,
 			'feedTitle' => 'News',
 			'feedImage' => NULL,
+			'formDiv' => 'ultimateform horizontalonly',
 		);
 		
 		# Return the defaults
@@ -274,7 +275,7 @@ class news extends frontControllerApplication
 		$form = new form (array (
 			'displayDescriptions' => false,
 			'databaseConnection' => $this->databaseConnection,
-			'div' => 'ultimateform horizontalonly',
+			'div' => $this->settings['formDiv'],
 			'formCompleteText' => 'Thanks for submitting this article. The Webmaster will review it and confirm when it is online.',
 		));
 		
@@ -731,7 +732,7 @@ class news extends frontControllerApplication
 		$_GET['direction'] = 'desc';
 		
 		# Delegate to the standard function for editing
-		$html = $this->editingTable ($this->settings['table'], $dataBindingAttributes, 'ultimateform', false, $sinenomineExtraSettings);
+		$html = $this->editingTable ($this->settings['table'], $dataBindingAttributes, $this->settings['formDiv'], false, $sinenomineExtraSettings);
 		
 		# Show the HTML
 		echo $html;
