@@ -642,7 +642,7 @@ class news extends frontControllerApplication
 		if ($listingMode) {
 			if ($article['urlInternal'] || $article['urlExternal']) {
 				$readMoreLink = ($article['urlInternal'] ? $article['urlInternal'] : $article['urlExternal']);
-				$target = (!$article['urlInternal'] ? ' target="_blank"' : '');	// Add if not internal
+				$target = (substr ($readMoreLink, 0, 1) != '/' ? ' target="_blank"' : '');	// Add target if not local
 				$html .= "\n<p><a href=\"{$readMoreLink}\"" . $target . ">Read more &hellip;</a></p>";
 			}
 		}
