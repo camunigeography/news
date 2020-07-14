@@ -274,7 +274,6 @@ class news extends frontControllerApplication
 		$form = new form (array (
 			'displayDescriptions' => false,
 			'databaseConnection' => $this->databaseConnection,
-			'size' => 70,
 			'div' => 'ultimateform horizontalonly',
 			'formCompleteText' => 'Thanks for submitting this article. The Webmaster will review it and confirm when it is online.',
 		));
@@ -283,13 +282,11 @@ class news extends frontControllerApplication
 		$form->heading ('p', 'All submissions are moderated and checked for suitability for publication.');
 		
 		# Databind the form
-		$form->dataBinding (array (
+		$form->dataBinding ($this->formMainAttributes () + array (
 			'database' => $this->settings['database'],
 			'table' => $this->settings['table'],
-			'intelligence' => true,
 			'exclude' => $exclude,
 			'attributes' => $this->formDataBindingAttributes (),
-			'int1ToCheckbox' => true,
 		));
 		$form->email (array (
 			'name' => 'email',
@@ -347,7 +344,22 @@ class news extends frontControllerApplication
 	}
 	
 	
-	# Helper function to define the dataBinding attributes
+	# Helper function to define main form attributes
+	private function formMainAttributes ()
+	{
+		# Define the attributes
+		$attributes = array (
+			'intelligence' => true,
+			'size' => 70,
+			'int1ToCheckbox' => true,
+		);
+		
+		# Return the attributes
+		return $attributes;
+	}
+	
+	
+	# Helper function to define the form dataBinding attributes
 	private function formDataBindingAttributes ()
 	{
 		# Define the attributes
@@ -712,13 +724,14 @@ class news extends frontControllerApplication
 	{
 		# Get the databinding attributes
 		$dataBindingAttributes = $this->formDataBindingAttributes ();
+		$sinenomineExtraSettings = $this->formMainAttributes ();
 		
 		# Order most recent first
 		#!# Hacky way, because of the lack of a way to modify $settings in editingTable ()
 		$_GET['direction'] = 'desc';
 		
 		# Delegate to the standard function for editing
-		$html = $this->editingTable ($this->settings['table'], $dataBindingAttributes, 'ultimateform');
+		$html = $this->editingTable ($this->settings['table'], $dataBindingAttributes, 'ultimateform', false, $sinenomineExtraSettings);
 		
 		# Show the HTML
 		echo $html;
