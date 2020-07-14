@@ -391,6 +391,7 @@ class news extends frontControllerApplication
 		<ul>
 			<li><tt>limit=<em>&lt;int&gt;</em></tt> (default as listed below).</li>
 			<li><tt>REMOTE_ADDR=<em>&lt;[ip]&gt;</em></tt> IP for forwarding.</li>
+			<li><tt>REMOTE_USER=<em>&lt;[userid]&gt;</em></tt> Logged-in user for forwarding.</li>
 		</ul>";
 		
 		# Create the list
@@ -440,9 +441,15 @@ class news extends frontControllerApplication
 			$remoteAddr = $_GET['REMOTE_ADDR'];
 		}
 		
+		# If $_GET['REMOTE_USER'] is supplied as a query string argument, proxy that through
+		$remoteUser = $_SERVER['REMOTE_USER'];
+		if (isSet ($_GET['REMOTE_USER'])) {
+			$remoteUser = $_GET['REMOTE_USER'];
+		}
+		
 		# Add a link to adding an article
 		$delimiter = '@';
-		$isInternal = preg_match ($delimiter . addcslashes ($this->settings['internalHostRegexp'], $delimiter) . $delimiter, gethostbyaddr ($remoteAddr));
+		$isInternal = ($remoteUser || preg_match ($delimiter . addcslashes ($this->settings['internalHostRegexp'], $delimiter) . $delimiter, gethostbyaddr ($remoteAddr)));
 		if ($isInternal) {
 			$html .= "\n<p id=\"submitlink\" class=\"actions\"><a href=\"{$this->baseUrl}/\"><img src=\"/images/icons/add.png\" class=\"icon\" /> Submit news</a></p>";
 		}
