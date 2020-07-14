@@ -111,8 +111,7 @@ class news extends frontControllerApplication
 			  `imageCredit` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Image credit (if any)',
 			  `richtextLonger` text COLLATE utf8_unicode_ci NOT NULL COMMENT 'Article text, including mention of relevant person',
 			  `richtextAbbreviated` text COLLATE utf8_unicode_ci COMMENT 'Abbreviated article text',
-			  `urlInternal` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Webpage on our site, if any',
-			  `urlExternal` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'External webpage giving more info, if any',
+			  `url` VARCHAR(255) NULL DEFAULT NULL COMMENT 'Webpage giving more info, if any',
 			  `startDate` date NOT NULL COMMENT 'Date to appear on website',
 			  `moniker` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Unique text key (a-z,0-9) (acts as approval field also)',
 			  `pinnedFrontPage` INT(1) NULL DEFAULT NULL COMMENT 'Pin to top, on front page?',
@@ -371,8 +370,7 @@ class news extends frontControllerApplication
 			'richtextAbbreviated' => array ('editorToolbarSet' => 'BasicLonger', 'width' => 600, 'height' => 180, 'maxlength' => 1000, 'externalLinksTarget' => false, ),
 			'sites' => array ('type' => 'checkboxes', 'values' => $this->settings['sites'], 'separator' => ',', 'defaultPresplit' => true, 'output' => array ('processing' => 'special-setdatatype'), ),
 			'startDate' => array ('default' => 'timestamp', 'picker' => true, ),
-			'urlInternal' => array ('placeholder' => 'https://', 'regexp' => '^https?://'),
-			'urlExternal' => array ('placeholder' => 'https://', 'regexp' => '^https?://'),
+			'url' => array ('placeholder' => 'https://', 'regexp' => '^https?://'),
 			'moniker' => array ('regexp' => '^([a-z0-9]+)$', 'size' => 30, ),
 			'username' => array ('editable' => false, ),
 		);
@@ -583,7 +581,7 @@ class news extends frontControllerApplication
 			
 			# URL internal
 			$delimiter = '@';
-			$articles[$key]['urlInternal'] = preg_replace ($delimiter . '^' . addcslashes ('https?://' . $this->siteUrls[$site] . '/', $delimiter) . $delimiter, '/', $article['urlInternal']);
+			$articles[$key]['url'] = preg_replace ($delimiter . '^' . addcslashes ('https?://' . $this->siteUrls[$site] . '/', $delimiter) . $delimiter, '/', $article['url']);
 			
 			# Article text (abbreviated and longer)
 			foreach ($richtextFields as $richtextField) {
@@ -653,10 +651,9 @@ class news extends frontControllerApplication
 		
 		# In listing mode, add a read more link, favouring internal over external
 		if ($listingMode) {
-			if ($article['urlInternal'] || $article['urlExternal']) {
-				$readMoreLink = ($article['urlInternal'] ? $article['urlInternal'] : $article['urlExternal']);
-				$target = (substr ($readMoreLink, 0, 1) != '/' ? ' target="_blank"' : '');	// Add target if not local
-				$html .= "\n<p><a href=\"{$readMoreLink}\"" . $target . ">Read more &hellip;</a></p>";
+			if ($article['url']) {
+				$target = (substr ($article['url'], 0, 1) != '/' ? ' target="_blank"' : '');	// Add target if not local
+				$html .= "\n<p><a href=\"{$article['url']}\"" . $target . ">Read more &hellip;</a></p>";
 			}
 		}
 		
@@ -673,7 +670,7 @@ class news extends frontControllerApplication
 		
 		# Compile the image
 		$imageCredit = htmlspecialchars ($article['imageCredit']);
-		$html = "<p" . ($alignright ? ' class="right"' : '') . "><a href=\"{$article['primaryUrl']}\"><img src=\"{$imageLocation}\" alt=\"{$imageCredit}\" title=\"{$imageCredit}\" border=\"0\" /></a></p>";
+		$html = "\n<p" . ($alignright ? ' class="right"' : '') . "><a href=\"{$article['primaryUrl']}\"><img src=\"{$imageLocation}\" alt=\"{$imageCredit}\" title=\"{$imageCredit}\" border=\"0\" /></a></p>";
 		
 		# Return the HTML
 		return $html;
@@ -705,14 +702,9 @@ class news extends frontControllerApplication
 	# Function to determine the primary link (used for the image and the heading)
 	private function primaryUrl ($article)
 	{
-		# If there is an internal URL, use that
-		if ($article['urlInternal']) {
-			return $article['urlInternal'];
-		}
-		
-		# If there is an external URL, use that
-		if ($article['urlExternal']) {
-			return $article['urlExternal'];
+		# If there is a URL, use that
+		if ($article['url']) {
+			return $article['url'];
 		}
 		
 		# Otherwise, return the article permalink (basically an anchor in the all-articles mode
