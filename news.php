@@ -97,34 +97,34 @@ class news extends frontControllerApplication
 		return "
 			-- Administrators
 			CREATE TABLE IF NOT EXISTS `administrators` (
-			  `username` varchar(255) COLLATE utf8_unicode_ci NOT NULL COMMENT 'Username',
-			  `active` enum('','Yes','No') COLLATE utf8_unicode_ci NOT NULL DEFAULT 'Yes' COMMENT 'Currently active?',
+			  `username` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Username',
+			  `active` enum('','Yes','No') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'Yes' COMMENT 'Currently active?',
 			  PRIMARY KEY (`username`)
-			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='System administrators';
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8mb4_unicode_ci COMMENT='System administrators';
 			
 			-- Articles
 			CREATE TABLE IF NOT EXISTS `articles` (
 			  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'Automatic key' PRIMARY KEY,
-			  `title` varchar(255) COLLATE utf8_unicode_ci NOT NULL COMMENT 'Title of article',
-			  `sites` varchar(255) COLLATE utf8_unicode_ci NOT NULL COMMENT 'Site(s), comma-separated',
-			  `photograph` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Image (if available)',
-			  `imageCredit` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Image credit (if any)',
-			  `richtextLonger` text COLLATE utf8_unicode_ci NOT NULL COMMENT 'Article text, including mention of relevant person',
-			  `richtextAbbreviated` text COLLATE utf8_unicode_ci COMMENT 'Abbreviated article text',
+			  `title` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Title of article',
+			  `sites` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Site(s), comma-separated',
+			  `photograph` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Image (if available)',
+			  `imageCredit` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Image credit (if any)',
+			  `richtextLonger` text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Article text, including mention of relevant person',
+			  `richtextAbbreviated` text COLLATE utf8mb4_unicode_ci COMMENT 'Abbreviated article text',
 			  `url` VARCHAR(255) NULL DEFAULT NULL COMMENT 'Webpage giving more info, if any',
 			  `startDate` date NOT NULL COMMENT 'Date to appear on website',
-			  `moniker` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Unique text key (a-z,0-9) (acts as approval field also)',
+			  `moniker` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Unique text key (a-z,0-9) (acts as approval field also)',
 			  `pinnedFrontPage` TINYINT NULL DEFAULT NULL COMMENT 'Pin to top, on front page?',
-			  `username` varchar(255) COLLATE utf8_unicode_ci NOT NULL COMMENT 'Submitted by user',
+			  `username` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Submitted by user',
 			  `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Submission date',
 			  UNIQUE KEY `moniker` (`moniker`)
-			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8mb4_unicode_ci;
 			
 			-- Settings
 			CREATE TABLE `settings` (
 			  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'Automatic key (ignored)' PRIMARY KEY,
-			  `sites` text COLLATE utf8_unicode_ci NOT NULL COMMENT 'Sites available, one per line, as moniker,label,URL'
-			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Settings';
+			  `sites` text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Sites available, one per line, as moniker,label,URL'
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8mb4_unicode_ci COMMENT='Settings';
 			INSERT INTO `settings` (`id`, `sites`) VALUES (1, 'example,Example');
 		";
 	}
