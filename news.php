@@ -109,8 +109,8 @@ class news extends frontControllerApplication
 			  `sites` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Site(s), comma-separated',
 			  `photograph` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Image (if available)',
 			  `imageCredit` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Image credit (if any)',
-			  `richtextLonger` text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Article text, including mention of relevant person',
-			  `richtextAbbreviated` text COLLATE utf8mb4_unicode_ci COMMENT 'Abbreviated article text',
+			  `articleRichtext` text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Article text, including mention of relevant person'
+			  `articleLongerRichtext` text COLLATE utf8mb4_unicode_ci COMMENT 'If necessary, longer full version of article',
 			  `url` VARCHAR(255) NULL DEFAULT NULL COMMENT 'Webpage giving more info, if any',
 			  `startDate` date NOT NULL COMMENT 'Date to appear on website',
 			  `moniker` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Unique text key (a-z,0-9) (acts as approval field also)',
@@ -267,7 +267,7 @@ class news extends frontControllerApplication
 		# Determine fields to exclude
 		$exclude = array ('username');
 		if (!$this->userIsAdministrator ()) {
-			$exclude = array_merge ($exclude, array ('moniker', 'richtextAbbreviated', 'pinnedFrontPage'));
+			$exclude = array_merge ($exclude, array ('moniker', 'articleRichtext', 'pinnedFrontPage'));
 		}
 		
 		# Create the form
@@ -366,8 +366,8 @@ class news extends frontControllerApplication
 		$attributes = array (
 			'photograph' => array ('directory' => $this->photographDirectoryOriginals, 'forcedFileName' => $this->user, 'allowedExtensions' => array ('jpg'), 'lowercaseExtension' => true, 'thumbnail' => true, 'draganddrop' => true, ),
 			#!# Ideally there would be some way to define a set of domain names that are treated as 'internal' so that https://www.example.org/foo/ could be entered rather than /foo/ to avoid external links being created
-			'richtextLonger' => array ('editorToolbarSet' => 'BasicLonger', 'width' => 600, 'height' => 300, 'externalLinksTarget' => false, ),
-			'richtextAbbreviated' => array ('editorToolbarSet' => 'BasicLonger', 'width' => 600, 'height' => 180, 'maxlength' => 1000, 'externalLinksTarget' => false, ),
+			'articleRichtext' => array ('editorToolbarSet' => 'BasicLonger', 'width' => 600, 'height' => 180, 'maxlength' => 1000, 'externalLinksTarget' => false, ),
+			'articleLongerRichtext' => array ('editorToolbarSet' => 'BasicLonger', 'width' => 600, 'height' => 300, 'externalLinksTarget' => false, ),
 			'sites' => array ('type' => 'checkboxes', 'values' => $this->settings['sites'], 'separator' => ',', 'defaultPresplit' => true, 'output' => array ('processing' => 'special-setdatatype'), ),
 			'startDate' => array ('default' => 'timestamp', 'picker' => true, ),
 			'url' => array ('placeholder' => 'https://', 'regexp' => '^https?://'),
@@ -587,7 +587,7 @@ class news extends frontControllerApplication
 		$articles = $this->databaseConnection->getData ($query, $this->dataSource, true, $preparedStatementValues);
 		
 		# Simplify each URL present in the data for the client site requesting (i.e. chopping the server name part if on the same site); e.g. if site=foo supplied and foo's URL is foo.example.com, then https://foo.example.com/path/ is rewritten to /path/
-		$richtextFields = array ('richtextLonger', 'richtextAbbreviated');
+		$articleRichtextFields = array ('articleRichtext', 'articleLongerRichtext');
 		foreach ($articles as $key => $article) {
 			
 			# URL internal
@@ -595,14 +595,14 @@ class news extends frontControllerApplication
 			$articles[$key]['url'] = preg_replace ($delimiter . '^' . addcslashes ('https?://' . $this->siteUrls[$site] . '/', $delimiter) . $delimiter, '/', $article['url']);
 			
 			# Article text (abbreviated and longer)
-			foreach ($richtextFields as $richtextField) {
+			foreach ($articleRichtextFields as $articleRichtextField) {
 				
 				# Strip server name part
-				$articles[$key][$richtextField] = preg_replace ($delimiter . addcslashes (' href="' . 'https?://' . $this->siteUrls[$site] . '/', $delimiter) . $delimiter, ' href="/', $articles[$key][$richtextField]);
+				$articles[$key][$articleRichtextField] = preg_replace ($delimiter . addcslashes (' href="' . 'https?://' . $this->siteUrls[$site] . '/', $delimiter) . $delimiter, ' href="/', $articles[$key][$articleRichtextField]);
 				
 				# Normalise target="_blank" cases
-				$articles[$key][$richtextField] = str_replace (' target="_blank"', '', $articles[$key][$richtextField]);
-				$articles[$key][$richtextField] = preg_replace ('@<a([^>]*) href="(https?://)@', '<a\1 target="_blank" href="\2', $articles[$key][$richtextField]);
+				$articles[$key][$articleRichtextField] = str_replace (' target="_blank"', '', $articles[$key][$articleRichtextField]);
+				$articles[$key][$articleRichtextField] = preg_replace ('@<a([^>]*) href="(https?://)@', '<a\1 target="_blank" href="\2', $articles[$key][$articleRichtextField]);
 			}
 		}
 		
@@ -652,10 +652,10 @@ class news extends frontControllerApplication
 	{
 		# Start with the text; in listing mode this is always unabbreviated
 		if ($listingMode) {
-			$html  = "\n" . $article['richtextLonger'];
+			$html  = "\n" . ($article['articleLongerRichtext'] ? $article['articleLongerRichtext'] : $article['articleRichtext']);
 		} else {
-			$html  = "\n" . ($article['richtextAbbreviated'] ? $article['richtextAbbreviated'] : $article['richtextLonger']);
-			if ($article['richtextAbbreviated']) {
+			$html  = "\n" . ($article['articleRichtext'] ? $article['articleRichtext'] : $article['articleLongerRichtext']);
+			if ($article['articleLongerRichtext']) {
 				$html .= "\n<p><a href=\"{$article['articlePermalink']}\">Read more &hellip;</a></p>";
 			}
 		}
@@ -754,7 +754,7 @@ class news extends frontControllerApplication
 		# Decorate
 		foreach ($articles as $id => $article) {
 			$articles[$id]['imageHtml'] = $this->articleImage ($article, false);
-			$articles[$id]['articleHtml'] = ($article['richtextAbbreviated'] ? $article['richtextAbbreviated'] : $article['richtextLonger']);
+			$articles[$id]['articleHtml'] = ($article['articleRichtext'] ? $article['articleRichtext'] : $article['articleLongerRichtext']);
 		}
 		
 		# Send the feed
@@ -792,7 +792,7 @@ class news extends frontControllerApplication
 		
 		# Add each entry
 		foreach ($articles as $article) {
-			$articleText = ($article['richtextAbbreviated'] ? $article['richtextAbbreviated'] : $article['richtextLonger']);
+			$articleText = ($article['articleRichtext'] ? $article['articleRichtext'] : $article['articleLongerRichtext']);
 			$xml .= "\n\t\t<item>";
 			$xml .= "\n\t\t\t<title>" . htmlspecialchars ($article['title']) . "</title>";
 			$xml .= "\n\t\t\t<description>" . str_replace ("\n", ' ', trim (htmlspecialchars (strip_tags ($articleText)))) . '</description>';
@@ -854,7 +854,7 @@ class news extends frontControllerApplication
 		
 		# Add each entry
 		foreach ($articles as $article) {
-			$articleText = ($article['richtextAbbreviated'] ? $article['richtextAbbreviated'] : $article['richtextLonger']);
+			$articleText = ($article['articleRichtext'] ? $article['articleRichtext'] : $article['articleLongerRichtext']);
 			$xml .= "\n\t<entry>";
 			$xml .= "\n\t\t<title>" . htmlspecialchars ($article['title']) . "</title>";
 			$xml .= "\n\t\t<link href=\"{$_SERVER['_SITE_URL']}{$article['articlePermalink']}\"/>";
