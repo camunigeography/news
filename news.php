@@ -104,9 +104,9 @@ class news extends frontControllerApplication
 			
 			-- Articles
 			CREATE TABLE IF NOT EXISTS `articles` (
-			  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'Automatic key' PRIMARY KEY,
+			  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'Article #' PRIMARY KEY,
 			  `title` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Title of article',
-			  `sites` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Site(s), comma-separated',
+			  `sites` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Site(s)',
 			  `photograph` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Image (if available)',
 			  `imageCredit` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Image credit (if any)',
 			  `articleRichtext` text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Article text, including mention of relevant person'
