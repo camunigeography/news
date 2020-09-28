@@ -67,7 +67,7 @@ class news extends frontControllerApplication
 			'editing' => array (
 				'description' => false,
 				'url' => 'articles/',
-				'tab' => 'Articles',
+				'tab' => 'Review articles',
 				'icon' => 'pencil',
 				'administrator' => true,
 			),
