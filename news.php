@@ -268,7 +268,7 @@ class news extends frontControllerApplication
 		$exclude = array ('username');
 		$exclude = array_merge ($exclude, array ('moniker', 'pinnedFrontPage'));	// Manually added as separate dataBinding block at the end
 		if (!$this->userIsAdministrator ()) {
-			$exclude = array_merge ($exclude, array ('articleRichtext'));
+			$exclude = array_merge ($exclude, array ('articleLongerRichtext'));
 		}
 		
 		# Create the form
