@@ -238,6 +238,12 @@ class news extends frontControllerApplication
 		# Start the page
 		$html  = "\n\n" . "<p>Welcome, {$this->userDetails['forename']}, to the news submission system.</p>";
 		
+		# Show moderation links for admins
+		if ($this->userIsAdministrator) {
+			$html .= "\n<h2>Moderate article submissions</h2>";
+			$html .= $this->moderationList ();
+		}
+		
 		# Show the reporting screen
 		$html .= "\n<h2>Submit an item of news</h2>";
 		$html .= $this->submissionForm ();
@@ -386,6 +392,35 @@ class news extends frontControllerApplication
 		
 		# Return the attributes
 		return $attributes;
+	}
+	
+	
+	# Moderation list
+	private function moderationList ($months = 3)
+	{
+		# Start the HTML
+		$html = '';
+		
+		# Get the data
+		$query = "SELECT id,title FROM articles WHERE moniker IS NULL AND startDate > DATE_SUB(NOW(),INTERVAL {$months} MONTH) ORDER BY id DESC;";
+		$data = $this->databaseConnection->getPairs ($query);
+		
+		# End if none
+		if (!$data) {
+			$html = "\n<p>{$this->tick} There are currently no articles requiring moderation.</p>";
+			return $html;
+		}
+		
+		# Convert to list
+		$list = array ();
+		foreach ($data as $id => $title) {
+			$list[] = "<a href=\"{$this->baseUrl}/articles/{$id}/edit.html\">" . htmlspecialchars ($title) . '</a>';
+		}
+		$html .= "\n<p>The following article(s), submitted within the last {$months} months, are awaiting review:</p>";
+		$html .= application::htmlUl ($list);
+		
+		# Return the HTML
+		return $html;
 	}
 	
 	
