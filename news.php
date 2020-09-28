@@ -287,7 +287,7 @@ class news extends frontControllerApplication
 		));
 		
 		# Make clear that submissions are moderated
-		$form->heading ('p', 'All submissions are moderated and checked for suitability for publication.');
+		$form->heading ('p', 'Please note that all submissions are moderated and checked for suitability for publication.');
 		
 		# Databind the form
 		$form->dataBinding ($this->formMainAttributes () + array (
