@@ -113,7 +113,7 @@ class news extends frontControllerApplication
 			  `articleLongerRichtext` text COLLATE utf8mb4_unicode_ci COMMENT 'If necessary, longer full version of article',
 			  `url` VARCHAR(255) NULL DEFAULT NULL COMMENT 'Webpage giving more info, if any',
 			  `startDate` date NOT NULL COMMENT 'Date to appear on website',
-			  `moniker` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Unique text key (a-z,0-9) (acts as approval field also)',
+			  `moniker` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Permalink name',
 			  `pinnedFrontPage` TINYINT NULL DEFAULT NULL COMMENT 'Pin to top, on front page?',
 			  `username` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Submitted by user',
 			  `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Submission date',
@@ -266,8 +266,9 @@ class news extends frontControllerApplication
 		
 		# Determine fields to exclude
 		$exclude = array ('username');
+		$exclude = array_merge ($exclude, array ('moniker', 'pinnedFrontPage'));	// Manually added as separate dataBinding block at the end
 		if (!$this->userIsAdministrator ()) {
-			$exclude = array_merge ($exclude, array ('moniker', 'articleRichtext', 'pinnedFrontPage'));
+			$exclude = array_merge ($exclude, array ('articleRichtext'));
 		}
 		
 		# Create the form
@@ -294,6 +295,14 @@ class news extends frontControllerApplication
 			'default' => $this->userDetails['email'],
 			'editable' => false,
 		));
+		if ($this->userIsAdministrator ()) {
+			$form->dataBinding ($this->formMainAttributes () + array (
+				'database' => $this->settings['database'],
+				'table' => $this->settings['table'],
+				'includeOnly' => array ('moniker', 'pinnedFrontPage'),
+				'attributes' => $this->formDataBindingAttributes (),
+			));
+		}
 		
 		# Set to mail the admin
 		$form->setOutputEmail ($this->settings['webmaster'], $this->settings['administratorEmail'], 'New news submission from ' . ($this->userName ? $this->userName : $this->user) . ': {title}', NULL, 'email');
@@ -371,7 +380,7 @@ class news extends frontControllerApplication
 			'sites' => array ('type' => 'checkboxes', 'values' => $this->settings['sites'], 'separator' => ',', 'defaultPresplit' => true, 'output' => array ('processing' => 'special-setdatatype'), ),
 			'startDate' => array ('default' => 'timestamp', 'picker' => true, ),
 			'url' => array ('placeholder' => 'https://', 'regexp' => '^https?://'),
-			'moniker' => array ('regexp' => '^([a-z0-9]+)$', 'size' => 30, ),
+			'moniker' => array ('heading' => array (2 => 'Approval', 'p' => '<strong>To approve this article, allocate it a simple one-word name</strong>, lower-case, without spaces.<br />This will be used for the article permalink, enabling people to link to this article directly.'), 'regexp' => '^([a-z0-9]+)$', 'size' => 30, 'placeholder' => 'E.g. myarticle'),
 			'username' => array ('editable' => false, ),
 		);
 		
