@@ -33,7 +33,6 @@ class news extends frontControllerApplication
 			'feedPermalinkUrl' => '/news/feed.rss',
 			'archivePermalinkUrl' => '/news/previous.html',
 			'authentication' => false,	// Defined on a per-action basis below
-			'useEditing' => true,
 			'internalHostRegexp' => NULL,
 			'feedTitle' => 'News',
 			'feedImage' => NULL,
@@ -65,7 +64,7 @@ class news extends frontControllerApplication
 				'icon' => 'add',
 				'authentication' => true,
 			),
-			'editing' => array (
+			'articles' => array (
 				'description' => false,
 				'url' => 'articles/',
 				'tab' => 'Review articles',
@@ -241,7 +240,7 @@ class news extends frontControllerApplication
 		
 		# Show moderation links for admins
 		if ($this->userIsAdministrator) {
-			$html .= "\n<h2>Moderate article submissions</h2>";
+			$html .= "\n<h2>Review article submissions</h2>";
 			$html .= $this->moderationList ();
 		}
 		
@@ -769,7 +768,7 @@ class news extends frontControllerApplication
 	
 	
 	# Admin editing section, substantially delegated to the sinenomine editing component
-	public function editing ($attributes = array (), $deny = false, $sinenomineExtraSettings = array ())
+	public function articles ($attributes = array (), $deny = false, $sinenomineExtraSettings = array ())
 	{
 		# Get the databinding attributes
 		$dataBindingAttributes = $this->formDataBindingAttributes ();

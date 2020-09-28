@@ -16,7 +16,7 @@
 	Use MacroFrontControllerApplication "$applicationBaseUrl/" "$description"
 	
 	# Sinenomine integration
-	Use MacroSinenomineEmbeddedTable "$applicationBaseUrl" "/articles" "editing"
+	Use MacroSinenomineEmbeddedTable "$applicationBaseUrl" "/articles" "articles"
 	
 	# Main application directives
 	RewriteEngine on
