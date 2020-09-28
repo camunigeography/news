@@ -393,7 +393,7 @@ class news extends frontControllerApplication
 	public function export ()
 	{
 		# Start the HTML
-		$html = '';
+		$html = "\n<p><strong>This page provides the URLs of each feed, for embedding within pages.</strong></p>";
 		
 		# Note optional parameters
 		$html .= "\n<p>Optional parameters:</p>
