@@ -38,6 +38,7 @@ class news extends frontControllerApplication
 			'feedTitle' => 'News',
 			'feedImage' => NULL,
 			'formDiv' => 'ultimateform horizontalonly',
+			'richtextEditorCSS' => array (),	// URLs of stylesheets to apply to richtext editing
 		);
 		
 		# Return the defaults
@@ -381,8 +382,8 @@ class news extends frontControllerApplication
 		$attributes = array (
 			'photograph' => array ('directory' => $this->photographDirectoryOriginals, 'forcedFileName' => $this->user, 'allowedExtensions' => array ('jpg'), 'lowercaseExtension' => true, 'thumbnail' => true, 'draganddrop' => true, ),
 			#!# Ideally there would be some way to define a set of domain names that are treated as 'internal' so that https://www.example.org/foo/ could be entered rather than /foo/ to avoid external links being created
-			'articleRichtext' => array ('editorToolbarSet' => 'BasicLonger', 'width' => 600, 'height' => 180, 'maxlength' => 1000, 'externalLinksTarget' => false, ),
-			'articleLongerRichtext' => array ('editorToolbarSet' => 'BasicLonger', 'width' => 600, 'height' => 300, 'externalLinksTarget' => false, ),
+			'articleRichtext' => array ('editorToolbarSet' => 'BasicLonger', 'width' => 600, 'height' => 180, 'maxlength' => 1000, 'externalLinksTarget' => false, 'config.contentsCss' => $this->settings['richtextEditorCSS'], ),
+			'articleLongerRichtext' => array ('editorToolbarSet' => 'BasicLonger', 'width' => 600, 'height' => 300, 'externalLinksTarget' => false, 'config.contentsCss' => $this->settings['richtextEditorCSS'], ),
 			'sites' => array ('type' => 'checkboxes', 'values' => $this->settings['sites'], 'separator' => ',', 'defaultPresplit' => true, 'output' => array ('processing' => 'special-setdatatype'), ),
 			'startDate' => array ('default' => 'timestamp', 'picker' => true, ),
 			'url' => array ('placeholder' => 'https://', 'regexp' => '^https?://'),
