@@ -493,9 +493,8 @@ class news extends frontControllerApplication
 		
 		# Add a link to adding an article
 		$delimiter = '@';
-		$isInternal = ($remoteUser || preg_match ($delimiter . addcslashes ($this->settings['internalHostRegexp'], $delimiter) . $delimiter, gethostbyaddr ($remoteAddr)));
-		if ($isInternal) {
-			$html .= "\n<p id=\"submitlink\" class=\"actions\"><a href=\"{$this->baseUrl}/\"><img src=\"/images/icons/add.png\" class=\"icon\" /> Submit news</a></p>";
+		if ($remoteUser) {
+			$html .= "\n<p class=\"primaryaction right noprint\"><a href=\"{$this->baseUrl}/\" title=\"Go to the news submission form\"><img src=\"/images/icons/add.png\" class=\"icon\" /> Submit news</a></p>";
 		}
 		
 		# Add Atom link if the output type is HTML
