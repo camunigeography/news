@@ -379,7 +379,7 @@ class news extends frontControllerApplication
 	{
 		# Define the attributes
 		$attributes = array (
-			'photograph' => array ('directory' => $this->photographDirectoryOriginals, 'forcedFileName' => $this->user, 'allowedExtensions' => array ('jpg'), 'lowercaseExtension' => true, 'thumbnail' => true, 'draganddrop' => true, ),
+			'photograph' => array ('directory' => $this->photographDirectoryOriginals, 'previewLocationPrefix' => $this->settings['imageLocation'], 'forcedFileName' => $this->user, 'allowedExtensions' => array ('jpg'), 'lowercaseExtension' => true, 'thumbnail' => true, 'draganddrop' => true, ),
 			#!# Ideally there would be some way to define a set of domain names that are treated as 'internal' so that https://www.example.org/foo/ could be entered rather than /foo/ to avoid external links being created
 			'articleRichtext' => array ('editorToolbarSet' => 'BasicLonger', 'width' => 600, 'height' => 300, 'maxlength' => 1000, 'externalLinksTarget' => false, 'config.contentsCss' => $this->settings['richtextEditorCSS'], ),
 			'articleLongerRichtext' => array ('editorToolbarSet' => 'BasicLonger', 'width' => 600, 'height' => 300, 'externalLinksTarget' => false, 'config.contentsCss' => $this->settings['richtextEditorCSS'], ),
