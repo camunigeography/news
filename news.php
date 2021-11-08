@@ -388,7 +388,7 @@ class news extends frontControllerApplication
 			'sites' => array ('type' => 'checkboxes', 'values' => $this->settings['sites'], 'separator' => ',', 'defaultPresplit' => true, 'output' => array ('processing' => 'special-setdatatype'), ),
 			'startDate' => array ('default' => 'timestamp', 'picker' => true, ),
 			'url' => array ('placeholder' => 'https://', 'regexp' => '^https?://'),
-			'moniker' => array ('heading' => array (2 => 'Approval', 'p' => '<strong>To approve this article, allocate it a simple one-word name</strong>, lower-case, without spaces.<br />This will be used for the article permalink, enabling people to link to this article directly.'), 'regexp' => '^([a-z0-9]+)$', 'size' => 30, 'placeholder' => 'E.g. myarticle'),
+			'moniker' => array ('heading' => array (2 => 'Approval', 'p' => '<strong>To approve this article, allocate it a simple one-word name</strong>, lower-case, without spaces.<br />This will be used for the article permalink, enabling people to link to this article directly.'), 'regexp' => '^([a-z0-9]+)$', 'size' => 30, 'placeholder' => 'E.g. myarticle', 'prepend' => $this->settings['newsPermalinkUrl'] . '#', ),
 			'username' => array ('editable' => false, ),
 		);
 		
