@@ -481,6 +481,9 @@ class news extends frontControllerApplication
 		# Determine the limit
 		$limit = (isSet ($_GET['limit']) && ctype_digit ($_GET['limit']) ? $_GET['limit'] : $this->exportFormats[$format]['limit']);
 		
+		# Determine the months limit
+		$maxMonths = (isSet ($_GET['maxmonths']) && ctype_digit ($_GET['maxmonths']) ? $_GET['maxmonths'] : false);
+		
 		# If $_GET['REMOTE_ADDR'] is supplied as a query string argument, proxy that through
 		$remoteAddr = $_SERVER['REMOTE_ADDR'];
 		if (isSet ($_GET['REMOTE_ADDR'])) {
@@ -506,7 +509,7 @@ class news extends frontControllerApplication
 		
 		# Construct the HTML based on the selected format
 		$function = 'export' . ucfirst (str_replace ('.', '', $format));
-		$html .= $this->{$function} ($site, $limit, $this->exportFormats[$format]['frontpage']);
+		$html .= $this->{$function} ($site, $limit, $this->exportFormats[$format]['frontpage'], $maxMonths);
 		
 		# Surround with a div (frontControllerApplication will have stripped the 'div' setting when the export flag is on)
 		if ($this->settings['divId']) {
@@ -519,7 +522,7 @@ class news extends frontControllerApplication
 	
 	
 	# Function to format the articles as an HTML table
-	private function exportFrontpage ($site, $limit, $frontpage)
+	private function exportFrontpage ($site, $limit, $frontpage, $maxMonths_ignored)
 	{
 		# End if no/invalid site
 		if (!$site) {return false;}
@@ -548,7 +551,7 @@ class news extends frontControllerApplication
 	
 	
 	# Function to format the table as a listing
-	private function exportRecent ($site, $limit, $frontpage)
+	private function exportRecent ($site, $limit, $frontpage, $maxMonths_ignored)
 	{
 		# End if no/invalid site
 		if (!$site) {return false;}
@@ -582,13 +585,13 @@ class news extends frontControllerApplication
 	
 	
 	# Function to format the table as a listing
-	private function exportArchive ($site, $limit, $frontpage)
+	private function exportArchive ($site, $limit, $frontpage, $maxMonths)
 	{
 		# End if no/invalid site
 		if (!$site) {return false;}
 		
 		# Get the articles or end
-		if (!$articles = $this->getArticles ($site, $limit, $frontpage)) {
+		if (!$articles = $this->getArticles ($site, $limit, $frontpage, $maxMonths)) {
 			return "\n<p>There are no items of news.</p>";
 		}
 		
@@ -608,7 +611,7 @@ class news extends frontControllerApplication
 	
 	
 	# Function to get the articles
-	private function getArticles ($site, $limit, $frontpage)
+	private function getArticles ($site, $limit, $frontpage, $maxMonths = false)
 	{
 		# Define prepared statement values
 		$preparedStatementValues = array ();
@@ -623,6 +626,7 @@ class news extends frontControllerApplication
 			WHERE
 				    moniker != '' AND moniker IS NOT NULL
 				    AND startDatetime <= NOW()"
+				. ($maxMonths ? " AND startDatetime > NOW() - INTERVAL {$maxMonths} MONTH" : '')
 				. " AND sites LIKE :site
 			ORDER BY "
 				. ($frontpage ? 'pinnedFrontPage DESC, ' : '')		// 1 then NULL
