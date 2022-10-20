@@ -112,7 +112,7 @@ class news extends frontControllerApplication
 			  `articleRichtext` text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Article text, including mention of relevant person'
 			  `articleLongerRichtext` text COLLATE utf8mb4_unicode_ci COMMENT 'If necessary, longer full version of article',
 			  `url` VARCHAR(255) NULL DEFAULT NULL COMMENT 'Webpage giving more info, if any',
-			  `startDate` date NOT NULL COMMENT 'Date to appear on website',
+			  `startDatetime` datetime NOT NULL COMMENT 'Date/time to appear on website',
 			  `moniker` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Permalink name',
 			  `pinnedFrontPage` TINYINT NULL DEFAULT NULL COMMENT 'Pin to top, on front page?',
 			  `username` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Submitted by user',
@@ -386,7 +386,7 @@ class news extends frontControllerApplication
 			'articleRichtext' => array ('editorToolbarSet' => 'BasicLonger', 'width' => 600, 'height' => 300, 'maxlength' => 1000, 'externalLinksTarget' => false, 'config.contentsCss' => $this->settings['richtextEditorCSS'], ),
 			'articleLongerRichtext' => array ('editorToolbarSet' => 'BasicLonger', 'width' => 600, 'height' => 300, 'externalLinksTarget' => false, 'config.contentsCss' => $this->settings['richtextEditorCSS'], ),
 			'sites' => array ('type' => 'checkboxes', 'values' => $this->settings['sites'], 'separator' => ',', 'defaultPresplit' => true, 'output' => array ('processing' => 'special-setdatatype'), ),
-			'startDate' => array ('default' => 'timestamp', 'picker' => true, ),
+			'startDatetime' => array ('default' => 'timestamp', 'picker' => true, ),
 			'url' => array ('placeholder' => 'https://', 'regexp' => '^https?://'),
 			'moniker' => array ('heading' => array (2 => 'Approval', 'p' => '<strong>To approve this article, allocate it a simple one-word name</strong>, lower-case, without spaces.<br />This will be used for the article permalink, enabling people to link to this article directly.'), 'regexp' => '^([a-z0-9]+)$', 'size' => 30, 'placeholder' => 'E.g. myarticle', 'prepend' => $this->settings['newsPermalinkUrl'] . '#', ),
 			'username' => array ('editable' => false, ),
@@ -404,7 +404,7 @@ class news extends frontControllerApplication
 		$html = '';
 		
 		# Get the data
-		$query = "SELECT id,title FROM articles WHERE moniker IS NULL AND startDate > DATE_SUB(NOW(),INTERVAL {$months} MONTH) ORDER BY id DESC;";
+		$query = "SELECT id,title FROM articles WHERE moniker IS NULL AND startDatetime > DATE_SUB(NOW(), INTERVAL {$months} MONTH) ORDER BY id DESC;";
 		$data = $this->databaseConnection->getPairs ($query);
 		
 		# End if none
@@ -618,15 +618,15 @@ class news extends frontControllerApplication
 		$query = "SELECT
 			*,
 			CONCAT('{$this->settings['archivePermalinkUrl']}','#',moniker) AS articlePermalink,
-			DATE_FORMAT(startDate, '%D %M, %Y') AS date
+			DATE_FORMAT(startDatetime, '%D %M, %Y') AS date
 			FROM {$this->dataSource}
 			WHERE
 				    moniker != '' AND moniker IS NOT NULL
-				    AND startDate <= CAST(NOW() AS DATE)"
+				    AND startDatetime <= NOW()"
 				. " AND sites LIKE :site
 			ORDER BY "
 				. ($frontpage ? 'pinnedFrontPage DESC, ' : '')		// 1 then NULL
-				. "startDate DESC, timestamp DESC "
+				. "startDatetime DESC, timestamp DESC "
 			. ($limit ? "LIMIT {$limit} " : '') .
 		';';
 		$articles = $this->databaseConnection->getData ($query, $this->dataSource, true, $preparedStatementValues);
@@ -845,7 +845,7 @@ class news extends frontControllerApplication
 				$xml .= "\n\t\t\t<media:content xmlns:media=\"http://search.yahoo.com/mrss/\" url=\"{$_SERVER['_SITE_URL']}{$imageLocation}\" medium=\"image\" type=\"image/jpeg\" width=\"{$width}\" height=\"{$height}\" />";	// See: https://stackoverflow.com/questions/483675/images-in-rss-feed
 			}
 			$xml .= "\n\t\t\t<guid isPermaLink=\"false\">{$_SERVER['_SITE_URL']}{$article['articlePermalink']}</guid>";
-			$xml .= "\n\t\t\t<pubDate>" . $this->rfc822Date (strtotime ($article['startDate'])) . '</pubDate>';
+			$xml .= "\n\t\t\t<pubDate>" . $this->rfc822Date (strtotime ($article['startDatetime'])) . '</pubDate>';
 			$xml .= "\n\t\t</item>\n";
 		}
 		
@@ -904,7 +904,7 @@ class news extends frontControllerApplication
 			$xml .= "\n\t\t<title>" . htmlspecialchars ($article['title']) . "</title>";
 			$xml .= "\n\t\t<link href=\"{$_SERVER['_SITE_URL']}{$article['articlePermalink']}\"/>";
 			$xml .= "\n\t\t<id>{$_SERVER['_SITE_URL']}{$article['articlePermalink']}</id>";
-			$xml .= "\n\t\t<updated>" . $this->rfc3339Date (strtotime ($article['startDate'])) . '</updated>';
+			$xml .= "\n\t\t<updated>" . $this->rfc3339Date (strtotime ($article['startDatetime'])) . '</updated>';
 			$xml .= "\n\t\t<summary>" . str_replace ("\n", ' ', trim (htmlspecialchars (strip_tags ($articleText)))) . "</summary>";
 			$xml .= "\n\t</entry>\n";
 		}
