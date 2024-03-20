@@ -100,7 +100,7 @@ class news extends frontControllerApplication
 			  `username` varchar(255) NOT NULL COMMENT 'Username',
 			  `active` enum('','Yes','No') NOT NULL DEFAULT 'Yes' COMMENT 'Currently active?',
 			  PRIMARY KEY (`username`)
-			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8mb4_unicode_ci COMMENT='System administrators';
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='System administrators';
 			
 			-- Articles
 			CREATE TABLE IF NOT EXISTS `articles` (
@@ -118,13 +118,13 @@ class news extends frontControllerApplication
 			  `username` varchar(255) NOT NULL COMMENT 'Submitted by user',
 			  `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Submission date',
 			  UNIQUE KEY `moniker` (`moniker`)
-			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8mb4_unicode_ci;
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 			
 			-- Settings
 			CREATE TABLE `settings` (
 			  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'Automatic key (ignored)' PRIMARY KEY,
 			  `sites` text NOT NULL COMMENT 'Sites available, one per line, as moniker,label,URL'
-			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8mb4_unicode_ci COMMENT='Settings';
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='Settings';
 			INSERT INTO `settings` (`id`, `sites`) VALUES (1, 'example,Example');
 		";
 	}
