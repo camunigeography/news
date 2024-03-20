@@ -2,7 +2,6 @@
 
 # Define the settings
 $settings = array (
-	'hostname' => 'localhost',
 	'username' => 'the_username',
 	'password' => 'the_password',
 	'userCallback' => 'userCallback',
@@ -27,7 +26,7 @@ function userCallback ($username)
 }
 
 # Load and run the news system
-require_once ('news.php');
+require_once ('vendor/autoload.php');
 new news ($settings);
 
 ?>

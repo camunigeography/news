@@ -4,14 +4,10 @@
 #   
 #   # Assessments
 #   Include /path/to/news/.httpd.conf.extract.txt
-#   Use MacroNews "/news/add" "News system" "/path/to/news/:/path/to/php/libraries/" "/path/to/images/"
+#   Use MacroNews "/news/add" "News system" "/path/to/images/"
 
 
-<Macro MacroNews $applicationBaseUrl $description $includePath $imageDirectory>
-	
-	<Location $applicationBaseUrl>
-		php_value include_path "$includePath"
-	</Location>
+<Macro MacroNews $applicationBaseUrl $description $imageDirectory>
 	
 	Use MacroFrontControllerApplication "$applicationBaseUrl/" "$description"
 	

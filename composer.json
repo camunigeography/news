@@ -1,0 +1,16 @@
+{
+    "name": "camunigeography/news",
+    "description": "News system",
+    "type": "project",
+    "license": "GPL-3.0-only",
+    "minimum-stability": "stable",
+    "require": {
+        "libpurecontent/frontcontrollerapplication": "^1.13",
+        "libpurecontent/image": "^1.4",
+        "libpurecontent/application": "^1.9",
+        "libpurecontent/ultimateform": "^1.29"
+    },
+    "autoload": {
+        "files": ["news.php"]
+    }
+}

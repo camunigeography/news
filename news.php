@@ -1,12 +1,9 @@
 <?php
 
-
-# Class to create a news management system
-
 #!# Add support for PDF conversion so it can be treated as an image
 
 
-require_once ('frontControllerApplication.php');
+# Class to create a news management system
 class news extends frontControllerApplication
 {
 	# Function to assign defaults additional to the general application defaults
@@ -193,9 +190,6 @@ class news extends frontControllerApplication
 	# Additional initialisation
 	public function main ()
 	{
-		# Load required libraries
-		require_once ('image.php');
-		
 		# Get the user details
 		if (!$this->userDetails = $this->userDetails ()) {
 			$requiresAuth = (isSet ($this->actions[$this->action]['authentication']) && $this->actions[$this->action]['authentication']);
