@@ -7,9 +7,9 @@
 #   Use MacroNews "/news/add" "News system" "/path/to/images/"
 
 
-<Macro MacroNews $applicationBaseUrl $description $imageDirectory>
+<Macro MacroNews $applicationBaseUrl $imageDirectory>
 	
-	Use MacroFrontControllerApplication "$applicationBaseUrl/" "$description"
+	Use MacroFrontControllerApplication "$applicationBaseUrl/" "News system"
 	
 	# Sinenomine integration
 	Use MacroSinenomineEmbeddedTable "$applicationBaseUrl" "/articles" "articles"
