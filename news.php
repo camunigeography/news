@@ -469,8 +469,12 @@ class news extends frontControllerApplication
 		# Start the HTML
 		$html  = '';
 		
-		# Determine the site
-		$site = (isSet ($_GET['site']) && strlen ($_GET['site']) && array_key_exists ($_GET['site'], $this->settings['sites']) ? $_GET['site'] : false);
+		# Determine the site(s)
+		$site = (
+			   isSet ($_GET['site'])
+			&& strlen ($_GET['site'])
+			&& (count (array_intersect (explode (',', $_GET['site']), array_keys ($this->settings['sites']))) == count (explode (',', $_GET['site'])))		// All requested site(s) exist in settings
+		? $_GET['site'] : false);
 		
 		# Determine the limit
 		$limit = (isSet ($_GET['limit']) && ctype_digit ($_GET['limit']) ? $_GET['limit'] : $this->exportFormats[$format]['limit']);
@@ -605,11 +609,20 @@ class news extends frontControllerApplication
 	
 	
 	# Function to get the articles
-	private function getArticles ($site, $limit, $frontpage, $maxMonths = false)
+	private function getArticles ($sites /* string of single site or comma-separated list of sites */, $limit, $frontpage, $maxMonths = false)
 	{
 		# Define prepared statement values
 		$preparedStatementValues = array ();
-		$preparedStatementValues['site'] = '%' . $site . '%';
+		$placeholders = array ();
+		$sites = explode (',', $sites);
+		foreach ($sites as $index => $site) {
+			$placeholder = 'site_' . $index;
+			$preparedStatementValues[$placeholder] = $site;
+			$placeholders[] = ':' . $placeholder;
+		}
+		
+		# Set the default site to link to
+		$firstSite = $sites[0];
 		
 		# Get the data
 		$query = "SELECT
@@ -621,7 +634,7 @@ class news extends frontControllerApplication
 				    moniker != '' AND moniker IS NOT NULL
 				    AND startDatetime <= NOW()"
 				. ($maxMonths ? " AND startDatetime > NOW() - INTERVAL {$maxMonths} MONTH" : '')
-				. " AND sites LIKE :site
+				. " AND sites IN(" . implode (',', $placeholders) . ")
 			ORDER BY "
 				. ($frontpage ? 'pinnedFrontPage DESC, ' : '')		// 1 then NULL
 				. "startDatetime DESC, timestamp DESC "
@@ -635,13 +648,13 @@ class news extends frontControllerApplication
 			
 			# URL internal
 			$delimiter = '@';
-			$articles[$key]['url'] = preg_replace ($delimiter . '^' . addcslashes ('https?://' . $this->siteUrls[$site] . '/', $delimiter) . $delimiter, '/', $article['url']);
+			$articles[$key]['url'] = preg_replace ($delimiter . '^' . addcslashes ('https?://' . $this->siteUrls[$firstSite] . '/', $delimiter) . $delimiter, '/', $article['url']);
 			
 			# Article text (abbreviated and longer)
 			foreach ($articleRichtextFields as $articleRichtextField) {
 				
 				# Strip server name part
-				$articles[$key][$articleRichtextField] = preg_replace ($delimiter . addcslashes (' href="' . 'https?://' . $this->siteUrls[$site] . '/', $delimiter) . $delimiter, ' href="/', $articles[$key][$articleRichtextField]);
+				$articles[$key][$articleRichtextField] = preg_replace ($delimiter . addcslashes (' href="' . 'https?://' . $this->siteUrls[$firstSite] . '/', $delimiter) . $delimiter, ' href="/', $articles[$key][$articleRichtextField]);
 				
 				# Normalise target="_blank" cases
 				$articles[$key][$articleRichtextField] = str_replace (' target="_blank"', '', $articles[$key][$articleRichtextField]);
