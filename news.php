@@ -611,14 +611,14 @@ class news extends frontControllerApplication
 	# Function to get the articles
 	private function getArticles ($sites /* string of single site or comma-separated list of sites */, $limit, $frontpage, $maxMonths = false)
 	{
-		# Define prepared statement values
+		# Define prepared statement values, and assemble FIND_IN_SET strings
 		$preparedStatementValues = array ();
-		$placeholders = array ();
 		$sites = explode (',', $sites);
+		$findInSets = array ();
 		foreach ($sites as $index => $site) {
 			$placeholder = 'site_' . $index;
 			$preparedStatementValues[$placeholder] = $site;
-			$placeholders[] = ':' . $placeholder;
+			$findInSets[] = "FIND_IN_SET(:{$placeholder}, sites)";
 		}
 		
 		# Set the default site to link to
@@ -634,8 +634,8 @@ class news extends frontControllerApplication
 				    moniker != '' AND moniker IS NOT NULL
 				    AND startDatetime <= NOW()"
 				. ($maxMonths ? " AND startDatetime > NOW() - INTERVAL {$maxMonths} MONTH" : '')
-				. " AND sites IN(" . implode (',', $placeholders) . ")
-			ORDER BY "
+				. ' AND (' . implode (' OR ', $findInSets) . ')
+			ORDER BY '
 				. ($frontpage ? 'pinnedFrontPage DESC, ' : '')		// 1 then NULL
 				. "startDatetime DESC, timestamp DESC "
 			. ($limit ? "LIMIT {$limit} " : '') .
