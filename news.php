@@ -276,6 +276,7 @@ class news extends frontControllerApplication
 			'displayDescriptions' => false,
 			'databaseConnection' => $this->databaseConnection,
 			'div' => $this->settings['formDiv'],
+			'enableNativeRequired' => true,
 			#!# The part of this confirmation about reviewing does not apply when making live directly by an admin
 			'formCompleteText' => 'Thanks for submitting this article. The Webmaster will review it and confirm when it is online.',
 			'emailName' => $this->settings['applicationName'],
