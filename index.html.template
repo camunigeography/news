@@ -11,7 +11,7 @@ $settings = array (
 	'rssImage' => 'http://www.example.org/images/general/logo.gif',
 );
 
-# Callback function to get the full details of a user
+# Callback function to get the full details of a user; this function will only be called if a user is present
 function userCallback ($username)
 {
 	/*

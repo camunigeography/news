@@ -211,6 +211,9 @@ class news extends frontControllerApplication
 	# Function to get the user details or force them to register
 	private function userDetails ()
 	{
+		# No details if not logged in
+		if (!$this->user) {return false;}
+		
 		# Get the list of users
 		$userCallback = $this->settings['userCallback'];
 		if (!$userDetails = $userCallback ($this->user)) {
