@@ -270,7 +270,7 @@ class news extends frontControllerApplication
 		# Determine fields to exclude
 		$exclude = array ('username');
 		$exclude = array_merge ($exclude, array ('moniker', 'pinnedFrontPage'));	// Manually added as separate dataBinding block at the end
-		if (!$this->userIsAdministrator ()) {
+		if (!$this->userIsAdministrator) {
 			$exclude = array_merge ($exclude, array ('articleLongerRichtext'));
 		}
 		
@@ -301,7 +301,7 @@ class news extends frontControllerApplication
 			'default' => $this->userDetails['email'],
 			'editable' => false,
 		));
-		if ($this->userIsAdministrator ()) {
+		if ($this->userIsAdministrator) {
 			$form->dataBinding ($this->formMainAttributes () + array (
 				'database' => $this->settings['database'],
 				'table' => $this->settings['table'],
