@@ -486,12 +486,6 @@ class news extends frontControllerApplication
 		# Determine the months limit
 		$maxMonths = (isSet ($_GET['maxmonths']) && ctype_digit ($_GET['maxmonths']) ? $_GET['maxmonths'] : false);
 		
-		# If $_GET['REMOTE_ADDR'] is supplied as a query string argument, proxy that through
-		$remoteAddr = $_SERVER['REMOTE_ADDR'];
-		if (isSet ($_GET['REMOTE_ADDR'])) {
-			$remoteAddr = $_GET['REMOTE_ADDR'];
-		}
-		
 		# If $_GET['REMOTE_USER'] is supplied as a query string argument, proxy that through
 		$remoteUser = $_SERVER['REMOTE_USER'];
 		if (isSet ($_GET['REMOTE_USER'])) {
@@ -499,7 +493,6 @@ class news extends frontControllerApplication
 		}
 		
 		# Add a link to adding an article
-		$delimiter = '@';
 		if ($remoteUser) {
 			$html .= "\n<p class=\"primaryaction right noprint\"><a href=\"{$_SERVER['_SITE_URL']}{$this->baseUrl}/\" title=\"Go to the news submission form\"><img src=\"/images/icons/add.png\" class=\"icon\" /> Submit news</a></p>";
 		}
@@ -897,9 +890,6 @@ class news extends frontControllerApplication
 		
 		# Get the articles
 		$articles = $this->getArticles ($site, $limit, $frontpage);
-		
-		# Define the base page
-		$fullBaseUrl = "{$_SERVER['_SITE_URL']}{$this->baseUrl}";
 		
 		# Build the XML
 		#!# The title, id and author/name need to take account of the $site setting
