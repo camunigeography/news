@@ -828,9 +828,6 @@ class news extends frontControllerApplication
 		# Get the articles
 		$articles = $this->getArticles ($site, $limit, $frontpage);
 		
-		# Define the base page
-		$fullBaseUrl = "{$_SERVER['_SITE_URL']}{$this->baseUrl}";
-		
 		# Build the XML
 		#!# The title, id and author/name need to take account of the $site setting
 		$xml  = '<' . '?' . 'xml version="1.0" encoding="utf-8"?>';	// Use this syntax to avoid confusing the editor
